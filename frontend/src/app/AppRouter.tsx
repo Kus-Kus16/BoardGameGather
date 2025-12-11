@@ -1,19 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import App from '../App'
 import Login from '../pages/Login/Login'
 import Register from '../pages/Login/Register'
-import BoardGames from '../pages/BoardGames/BoardGames'
+import BoardGames from '../pages/BoardGames/BoardGameList'
 import GameSesions from '../pages/GameSessions/GameSessions'
+import BoardGameInsight from '../pages/BoardGames/BoardGameInsight'
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/board-games" element={<BoardGames />} />
+        <Route path="/boardgames" element={<BoardGames />} />
         <Route path="/game-sessions" element={<GameSesions />} />
+        <Route path="/boardgames/:id" element={<BoardGameInsight />} />
       </Routes>
     </BrowserRouter>
   )
