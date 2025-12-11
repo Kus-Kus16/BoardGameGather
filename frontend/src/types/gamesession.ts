@@ -1,6 +1,6 @@
 import type { BoardGame } from "./boardgame";
 
-export type GameSession = {
+export type GameSessionType = {
     id: number;
     data: string;
     playercount: number;
