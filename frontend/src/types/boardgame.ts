@@ -1,4 +1,4 @@
-export interface BoardGame {
+export interface BoardGameType {
     id: number;
     title: string;
     description: string;

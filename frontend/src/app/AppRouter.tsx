@@ -13,10 +13,10 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/boardgames" element={<BoardGames />} />
-        <Route path="/game-sessions" element={<GameSesions />} />
+        <Route path="/sessions" element={<GameSesions />} />
         <Route path="/boardgames/:id" element={<BoardGameInsight />} />
-        <Route path="/game-sessions/add" element={<AddGameSession />} />
-        <Route path="/user-game-sessions" element={<UserSessions />} />
+        <Route path="/sessions/add" element={<AddGameSession />} />
+        <Route path="/sessions/user" element={<UserSessions />} />
       </Routes>
   )
 }

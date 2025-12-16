@@ -14,7 +14,7 @@ export default function GameSesions() {
 
     const loadGameSessions = async (username: string) => {
         try {
-            const response = await fetch("http://localhost:8080/userSessions", {
+            const response = await fetch("http://localhost:8080/sessions/user", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -27,6 +27,7 @@ export default function GameSesions() {
             }
 
             const data = await response.json();
+            console.log(data)
             setGameSessions(data);
         } catch (err) {
             setError("Failed to load user game sessions");
@@ -49,7 +50,7 @@ export default function GameSesions() {
         {error ? (<div>{error}</div>) : 
             (<div>
                 {gameSessions
-                    .filter((session) => session.owner === auth?.username)
+                    // .filter((session) => session.owner === auth?.username)
                     .map((session) => (
                         <GameSession
                             key={session.id}

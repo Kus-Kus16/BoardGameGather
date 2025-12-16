@@ -9,7 +9,7 @@ export default function GameSession({ session }: { session: GameSessionType }) {
         try {
             const formData = { username: auth?.username };
 
-            const response = await fetch(`http://localhost:8080/session/${session.id}/join`, {
+            const response = await fetch(`http://localhost:8080/sessions/${session.id}/join`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -26,8 +26,8 @@ export default function GameSession({ session }: { session: GameSessionType }) {
 
     return (
         <div className="board-game-preview" style={{ border: "1px solid black" }}>
-            <h3>{session.boardgame.title}</h3>
-            <p>Players: {session.boardgame.minPlayers} - {session.boardgame.maxPlayers}</p>
+            <h3>{session.boardGame.title}</h3>
+            <p>Players: {session.boardGame.minPlayers} - {session.boardGame.maxPlayers}</p>
             <button onClick={handleJoinSession}>Join</button>
         </div>
     )

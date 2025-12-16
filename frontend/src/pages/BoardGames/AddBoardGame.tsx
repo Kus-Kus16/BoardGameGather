@@ -1,9 +1,9 @@
 import React from 'react'
 import { useState } from 'react'
-import type { BoardGame } from '../../types/boardgame';
+import type { BoardGameType } from '../../types/boardgame';
 
 type AddBoardGameProps = {
-    onAddGame: (newGame: BoardGame) => void;
+    onAddGame: (newGame: BoardGameType) => void;
 }
 
 export default function AddBoardGame({onAddGame}: AddBoardGameProps) {

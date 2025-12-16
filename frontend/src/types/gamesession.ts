@@ -1,10 +1,11 @@
-import type { BoardGame } from "./boardgame";
+import type { BoardGameType } from "./boardgame";
+import type {User} from "./user.ts";
 
-export type GameSessionType = {
+export interface GameSessionType {
     id: number;
     date: string;
     playercount: number;
     description: string;
-    owner: string;
-    boardgame: BoardGame;
-};
+    owner: User;
+    boardGame: BoardGameType;
+}

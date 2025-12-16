@@ -1,7 +1,7 @@
-import type { BoardGame } from "../../types/boardgame";
+import type { BoardGameType } from "../../types/boardgame";
 
 
-export default function BoardGamePreview({ boardGame }: { boardGame: BoardGame }) {
+export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameType }) {
 
     return (
         <a href={`/boardgames/${boardGame.id}`} style={{textDecoration: "none"}}>

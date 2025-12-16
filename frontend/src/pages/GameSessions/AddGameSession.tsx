@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import type { BoardGame } from '../../types/boardgame';
+import type { BoardGameType } from '../../types/boardgame';
 import { AuthContext } from '../../context/AuthContext';
 
 export default function AddGameSession() {
@@ -11,7 +11,7 @@ export default function AddGameSession() {
         playercount: 1,
         description: '',
         owner: auth?.username || '',
-        boardgame: {} as BoardGame,
+        boardgame: {} as BoardGameType,
     });
 
     const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function AddGameSession() {
                 playercount: 1,
                 description: '',
                 owner: auth?.username || '',
-                boardgame: {} as BoardGame,
+                boardgame: {} as BoardGameType,
             });
             alert('Game session added successfully!');
         } catch (err) {

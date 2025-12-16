@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
-import type { BoardGame } from "../../types/boardgame";
+import type { BoardGameType } from "../../types/boardgame";
 import { useEffect, useState } from "react";
 
 export default function BoardGameInsight() {
 
     const { id } = useParams<{ id: string }>();
 
-    const [boardGame, setBoardGame] = useState<BoardGame | null>(null);
+    const [boardGame, setBoardGame] = useState<BoardGameType | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {

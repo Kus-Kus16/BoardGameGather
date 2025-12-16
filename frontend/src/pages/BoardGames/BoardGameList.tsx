@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import BoardGamePreview from "./BoardGamePreview";
-import type { BoardGame } from "../../types/boardgame";
+import type { BoardGameType } from "../../types/boardgame";
 import AddBoardGame from "./AddBoardGame";
 
 
 export default BoardGameList;function BoardGameList() {
-  const [boardGames, setBoardGames] = useState<BoardGame[]>([]);
+  const [boardGames, setBoardGames] = useState<BoardGameType[]>([]);
 
   useEffect(() => {
     fetch('http://localhost:8080/boardgames')
@@ -16,11 +16,7 @@ export default BoardGameList;function BoardGameList() {
       .catch(err => console.error(err));
   }, []);
 
-  useEffect(() => {
-    console.log(boardGames);
-  }, [boardGames])
-
-  const handleAddGame = (newGame: BoardGame) => {
+  const handleAddGame = (newGame: BoardGameType) => {
     setBoardGames(prev => [...prev, newGame]);
   };
 
