@@ -2,7 +2,7 @@ import type { BoardGame } from "./boardgame";
 
 export type GameSessionType = {
     id: number;
-    data: string;
+    date: string;
     playercount: number;
     description: string;
     owner: string;
