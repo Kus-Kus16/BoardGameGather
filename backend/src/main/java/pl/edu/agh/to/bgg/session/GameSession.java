@@ -21,7 +21,7 @@ public class GameSession {
     @ManyToOne
     private BoardGame boardGame;
 
-    @OneToOne
+    @ManyToOne
     private User owner;
 
     @ManyToMany

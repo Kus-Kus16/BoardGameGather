@@ -1,18 +1,22 @@
-import { useContext, useState } from 'react';
-import type { BoardGameType } from '../../types/boardgame';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
-export default function AddGameSession() {
+export default function AddGameSession({ boardGameId }: { boardGameId: number }) {
     
     const auth = useContext(AuthContext);
+    const id = boardGameId;
 
     const [formData, setFormData] = useState({
+        boardGameId: id,
+        ownerUsername: auth?.username || '',
         date: '',
-        playercount: 1,
+        numberOfPlayers: 1,
         description: '',
-        owner: auth?.username || '',
-        boardgame: {} as BoardGameType,
     });
+
+    useEffect(() => {
+        setFormData(prev => ({ ...prev, ownerUsername: auth?.username || '' }));
+    }, [auth?.username]);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -21,7 +25,7 @@ export default function AddGameSession() {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'playercount' ? parseInt(value) : value,
+            [name]: name === 'numberOfPlayers' ? parseInt(value) : value,
         }));
     };
 
@@ -29,6 +33,12 @@ export default function AddGameSession() {
         e.preventDefault();
         setLoading(true);
         setError('');
+
+        if (!formData.date) {
+            setError('Please select a date for the session');
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch('http://localhost:8080/sessions/add', {
@@ -40,15 +50,16 @@ export default function AddGameSession() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add game session');
+                const text = await response.text();
+                throw new Error(text || `Failed to add game session (${response.status})`);
             }
 
             setFormData({
+                boardGameId: id,
+                ownerUsername: auth?.username || '',
                 date: '',
-                playercount: 1,
+                numberOfPlayers: 1,
                 description: '',
-                owner: auth?.username || '',
-                boardgame: {} as BoardGameType,
             });
             alert('Game session added successfully!');
         } catch (err) {
@@ -73,9 +84,9 @@ export default function AddGameSession() {
                 <br />
                 <input
                     type="number"
-                    name="playercount"
+                    name="numberOfPlayers"
                     min="1"
-                    value={formData.playercount}
+                    value={formData.numberOfPlayers}
                     onChange={handleChange}
                     required
                 />

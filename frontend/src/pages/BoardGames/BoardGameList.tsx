@@ -25,10 +25,10 @@ export default BoardGameList;function BoardGameList() {
       <AddBoardGame onAddGame={handleAddGame} />
       <hr />
       {boardGames.map((game) => (
-      <BoardGamePreview 
-        key={game.id}
-        boardGame={game}
-      />
+        <BoardGamePreview 
+          key={game.id}
+          boardGame={game}
+        />
       ))}
     </div>
   )

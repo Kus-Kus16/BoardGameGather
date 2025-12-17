@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import type { BoardGameType } from "../../types/boardgame";
 import { useEffect, useState } from "react";
+import AddGameSession from "../GameSessions/AddGameSession";
 
 export default function BoardGameInsight() {
 
@@ -26,15 +27,18 @@ export default function BoardGameInsight() {
     }, [id]);
 
     return (
-        <div>
-            {boardGame === null ? <p>{error}</p> : 
+        <>
+            <AddGameSession boardGameId={parseInt(id!)} />
             <div>
-                <h1>{boardGame.title}</h1>
-                <p>Players: {boardGame.minPlayers} - {boardGame.maxPlayers}</p>
-                <p>Time: {boardGame.minutesPlaytime} minutes</p>
-                <p>Description: {boardGame.description}</p>
+                {boardGame === null ? <p>{error}</p> : 
+                <div>
+                    <h1>{boardGame.title}</h1>
+                    <p>Players: {boardGame.minPlayers} - {boardGame.maxPlayers}</p>
+                    <p>Time: {boardGame.minutesPlaytime} minutes</p>
+                    <p>Description: {boardGame.description}</p>
+                </div>
+                }
             </div>
-            }
-        </div>
+        </>
     )
 }

@@ -4,8 +4,8 @@ import Register from '../pages/Login/Register'
 import BoardGames from '../pages/BoardGames/BoardGameList'
 import GameSesions from '../pages/GameSessions/GameSessions'
 import BoardGameInsight from '../pages/BoardGames/BoardGameInsight'
-import AddGameSession from '../pages/GameSessions/AddGameSession'
 import UserSessions from '../pages/GameSessions/UserSessions'
+import GameSessionInsight from '../pages/GameSessions/GameSessionInsight'
 
 export default function AppRouter() {
   return (
@@ -15,8 +15,9 @@ export default function AppRouter() {
         <Route path="/boardgames" element={<BoardGames />} />
         <Route path="/sessions" element={<GameSesions />} />
         <Route path="/boardgames/:id" element={<BoardGameInsight />} />
-        <Route path="/sessions/add" element={<AddGameSession />} />
+        {/* <Route path="/sessions/add" element={<AddGameSession />} /> */}
         <Route path="/sessions/user" element={<UserSessions />} />
+        <Route path="/sessions/:id" element={<GameSessionInsight />} />
       </Routes>
   )
 }
