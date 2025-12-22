@@ -34,7 +34,15 @@ Mariusz Krause
 
 ## Uruchomienie projektu
 ### Backend
- Standardowe uruchomienie aplikacji SpringBoot, np. przez IntelliJ IDEA
+ W katalogu głównym projektu:
+ ```
+ cd ./backend
+ ```
+ Tworzymy plik `.env` na podstawie `.env.example`, z danymi do logowania do bazy danych. Następnie:
+ ```
+ docker-compose up
+ ```
+ Uruchamiamy aplikację SpringBoot (np. przez IntelliJ IDEA), dodając plik `.env` jako zmienne środowiskowe w konfiguracji uruchomieniowej.
 ### Frontend
  W katalogu głównym projektu:
  ```

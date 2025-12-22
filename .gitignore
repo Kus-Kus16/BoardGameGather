@@ -507,3 +507,6 @@ fabric.properties
 
 **/.idea/
 *.db
+
+## env variables
+.env
