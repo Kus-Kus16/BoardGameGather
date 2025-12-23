@@ -14,12 +14,11 @@ export default function GameSesions() {
 
     const loadGameSessions = async (username: string) => {
         try {
-            const response = await fetch("http://localhost:8080/sessions/user", {
-            method: "POST",
+            const response = await fetch("http://localhost:8080/sessions?username=" + username, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username }),
+            }
             });
 
             if (!response.ok) {

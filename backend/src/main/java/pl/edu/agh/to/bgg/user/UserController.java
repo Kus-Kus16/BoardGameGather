@@ -7,7 +7,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("users")
-@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
     private final UserService userService;
 
@@ -15,7 +14,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("register")
+    @PostMapping
     public User registerUser(@RequestBody @Valid UserRequestDTO dto) {
         try {
             return userService.addUser(dto.username());

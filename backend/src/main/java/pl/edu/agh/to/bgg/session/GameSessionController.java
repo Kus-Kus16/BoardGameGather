@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("sessions")
-@CrossOrigin(origins = "http://localhost:5173")
 public class GameSessionController {
     private final GameSessionService gameSessionService;
 
@@ -21,7 +20,10 @@ public class GameSessionController {
     }
 
     @GetMapping
-    public List<GameSession> getSessions() {
+        public List<GameSession> getSessions(@RequestParam(name = "username", required = false) String username) {
+        if (username != null) {
+            return gameSessionService.getUserSessions(username);
+        }
         return gameSessionService.getSessions();
     }
 
@@ -34,12 +36,7 @@ public class GameSessionController {
         }
     }
 
-    @PostMapping("/user")
-    public List<GameSession> getUserSessions(@RequestBody @Valid UserRequestDTO userDTO) {
-        return gameSessionService.getUserSessions(userDTO.username());
-    }
-
-    @PostMapping("{id}/join")
+    @PutMapping("{id}")
     public GameSession joinSession(@PathVariable("id") int sessionId, @RequestBody @Valid UserRequestDTO userDTO) {
         try {
             return gameSessionService.joinSession(sessionId, userDTO.username());
@@ -50,7 +47,7 @@ public class GameSessionController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public GameSession createSession(@RequestBody @Valid GameSessionCreateDTO dto) {
         try {
             return gameSessionService.addSession(dto);

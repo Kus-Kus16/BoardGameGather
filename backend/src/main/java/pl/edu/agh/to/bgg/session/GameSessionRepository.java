@@ -18,6 +18,7 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Intege
     List<GameSession> findAllByParticipantUsername(@Param("username") String username);
 
 
+    // TODO check for n+1
     @Query("SELECT s FROM GameSession s " +
             "LEFT JOIN FETCH s.participants " +
             "JOIN FETCH s.owner " +

@@ -1,7 +1,8 @@
-package pl.edu.agh.to.bgg;
+package pl.edu.agh.to.bgg.configs;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.BoardGameRepository;
 import pl.edu.agh.to.bgg.session.GameSession;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Configuration
+@Profile("dev")
 public class DatabaseCreator {
     private final BoardGameRepository boardGameRepository;
     private final UserRepository userRepository;

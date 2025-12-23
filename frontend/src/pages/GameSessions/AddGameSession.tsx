@@ -41,7 +41,7 @@ export default function AddGameSession({ boardGameId }: { boardGameId: number })
         }
 
         try {
-            const response = await fetch('http://localhost:8080/sessions/add', {
+            const response = await fetch('http://localhost:8080/sessions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

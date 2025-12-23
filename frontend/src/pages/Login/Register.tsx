@@ -12,7 +12,7 @@ export default function Register() {
       const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault();
   
-          const url:string = "http://localhost:8080/users/register";
+          const url:string = "http://localhost:8080/users";
           const payload = { username: login };
   
           try {

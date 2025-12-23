@@ -42,7 +42,7 @@ Mariusz Krause
  ```
  docker-compose up
  ```
- Uruchamiamy aplikację SpringBoot (np. przez IntelliJ IDEA), dodając plik `.env` jako zmienne środowiskowe w konfiguracji uruchomieniowej.
+ Uruchamiamy aplikację SpringBoot (np. przez IntelliJ IDEA), dodając plik `.env` jako zmienne środowiskowe, oraz profil `dev` w konfiguracji uruchomieniowej.
 ### Frontend
  W katalogu głównym projektu:
  ```

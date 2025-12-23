@@ -37,8 +37,8 @@ export default function GameSessionInsight() {
         try {
             const formData = { username: auth?.username };            
 
-            const response = await fetch(`http://localhost:8080/sessions/${id}/join`, {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8080/sessions/${id}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             })

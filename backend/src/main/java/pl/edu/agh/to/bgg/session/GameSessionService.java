@@ -66,7 +66,6 @@ public class GameSessionService {
         }
 
         gameSession.getParticipants().add(user);
-        gameSessionRepository.save(gameSession);
 
         return gameSession;
     }
