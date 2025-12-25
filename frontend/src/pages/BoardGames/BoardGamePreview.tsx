@@ -1,21 +1,39 @@
 import { Card, CardContent, CardActions, Typography, Button, CardActionArea, CardMedia, Tooltip, Box } from "@mui/material";
 import type { BoardGameType } from "../../types/BoardGameType.ts";
 import { Link as RouterLink } from "react-router-dom";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {AuthContext} from "../../auth/AuthContext.tsx";
+import {ImageNotSupported} from "@mui/icons-material";
 
 export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameType }) {
     const auth = useContext(AuthContext);
+    const [imagePreview] = useState<string>("");
 
     return (
         <Card sx={{ minWidth: 240, maxWidth: 345 }}>
             <CardActionArea component={RouterLink} to={`/boardgames/${boardGame.id}`}>
-                <CardMedia
-                    component="img"
-                    height="140"
-                    image="images/lorempicsum.jpg"
-                    alt="boardgame image"
-                />
+
+                {imagePreview ? (
+                    <CardMedia
+                        component="img"
+                        height="140"
+                        image={imagePreview}
+                        alt="Podgląd obrazka"
+                    />
+                ) : (
+                    <Box
+                        sx={{
+                            height: 140,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            bgcolor: "grey.100"
+                        }}
+                    >
+                        <ImageNotSupported sx={{ fontSize: 80, color: "grey.400" }} />
+                    </Box>
+                )}
+
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                         {boardGame.title}

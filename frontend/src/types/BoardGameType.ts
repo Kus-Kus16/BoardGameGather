@@ -8,3 +8,4 @@ export interface BoardGameType {
     imageUrl: string;
     rulebookUrl?: string;
 }
+

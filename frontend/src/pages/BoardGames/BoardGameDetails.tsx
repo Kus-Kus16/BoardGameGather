@@ -1,22 +1,11 @@
 import {useContext, useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-    Box,
-    Typography,
-    Card,
-    CardMedia,
-    CardContent,
-    CardActions,
-    Button,
-    CircularProgress,
-    Alert,
-    Stack,
-    Tooltip
-} from "@mui/material";
+import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, CircularProgress, Alert, Stack, Tooltip } from "@mui/material";
 import type { BoardGameType } from "../../types/BoardGameType.ts";
 import api from "../../api/axios";
 import {Link as RouterLink} from "react-router";
 import {AuthContext} from "../../auth/AuthContext.tsx";
+import {ImageNotSupported} from "@mui/icons-material";
 
 export default function BoardGameDetails() {
     const { id } = useParams<{ id: string }>();
@@ -25,6 +14,7 @@ export default function BoardGameDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const auth = useContext(AuthContext);
+    const [imagePreview] = useState<string>("");
 
     const handleDelete = async () => {
         if (!boardGame) {
@@ -76,12 +66,28 @@ export default function BoardGameDetails() {
     return (
         <Box sx={{ p: 3, maxWidth: 700, margin: 'auto' }}>
             <Card>
-                <CardMedia
-                    component="img"
-                    height="300"
-                    image="images/lorempicsum.jpg"
-                    alt={boardGame.title}
-                />
+
+                {imagePreview ? (
+                    <CardMedia
+                        component="img"
+                        height="300"
+                        image={imagePreview}
+                        alt="Podgląd obrazka"
+                    />
+                ) : (
+                    <Box
+                        sx={{
+                            height: 300,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            bgcolor: "grey.100"
+                        }}
+                    >
+                        <ImageNotSupported sx={{ fontSize: 80, color: "grey.400" }} />
+                    </Box>
+                )}
+
                 <CardContent>
                     <Typography variant="h4" gutterBottom>{boardGame.title}</Typography>
                     <Typography variant="body1" sx={{ color: 'text.secondary', mb: 1 }}>

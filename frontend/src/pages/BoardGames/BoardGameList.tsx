@@ -60,7 +60,7 @@ export default function BoardGameList() {
                                     justifyContent: "center",
                                     cursor: "pointer",
                                 }}
-                                onClick={() => navigate("/boardgames/add")}
+                                onClick={() => navigate("/boardgames/new")}
                             >
                                 <CardActionArea
                                     sx={{
