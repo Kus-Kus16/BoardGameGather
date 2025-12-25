@@ -9,6 +9,7 @@ import UserSessions from "../pages/GameSessions/UserSessions";
 import HomePage from "../pages/HomePage.tsx";
 import AuthPage from "../pages/Auth/AuthPage.tsx";
 import BoardGameAdd from "../pages/BoardGames/BoardGameAdd.tsx";
+import BoardGameEdit from "../pages/BoardGames/BoardGameEdit.tsx";
 
 export default function AppRouter() {
     return (
@@ -31,7 +32,7 @@ export default function AppRouter() {
                 <Route element={<RequireAuth />}>
                     <Route path="/sessions/user" element={<UserSessions />} />
                     <Route path="/boardgames/new" element={<BoardGameAdd />} />
-                    {/* <Route path="/sessions/add" element={<AddGameSession />} /> */}
+                    <Route path="/boardgames/edit/:id" element={<BoardGameEdit />} />
                 </Route>
 
             </Route>

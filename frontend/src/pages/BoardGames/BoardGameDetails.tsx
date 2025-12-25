@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, CircularProgress, Alert, Stack, Tooltip } from "@mui/material";
-import type { BoardGameType } from "../../types/BoardGameType.ts";
+import type {BoardGameTypeFull} from "../../types/BoardGameType.ts";
 import api from "../../api/axios";
 import {Link as RouterLink} from "react-router";
 import {AuthContext} from "../../auth/AuthContext.tsx";
@@ -10,7 +10,7 @@ import {ImageNotSupported} from "@mui/icons-material";
 export default function BoardGameDetails() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [boardGame, setBoardGame] = useState<BoardGameType | null>(null);
+    const [boardGame, setBoardGame] = useState<BoardGameTypeFull | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const auth = useContext(AuthContext);
@@ -27,19 +27,17 @@ export default function BoardGameDetails() {
         try {
             await api.delete(`/boardgames/${boardGame.id}`);
             navigate("/boardgames");
-        } catch (err) {
-            console.error(err);
-            alert("Nie udało się usunąć gry.");
+        } catch {
+            setError("Nie udało się usunąć gry.");
         }
     };
 
     useEffect(() => {
         const fetchBoardGame = async () => {
             try {
-                const { data } = await api.get<BoardGameType>(`/boardgames/${id}`);
+                const { data } = await api.get<BoardGameTypeFull>(`/boardgames/${id}`);
                 setBoardGame(data);
-            } catch (err) {
-                console.error(err);
+            } catch {
                 setError("Nie udało się pobrać danych gry.");
             } finally {
                 setLoading(false);
@@ -61,7 +59,10 @@ export default function BoardGameDetails() {
         return <Alert severity="error">{error}</Alert>;
     }
 
-    if (!boardGame) return null;
+    if (!boardGame) {
+        setError("Nie znaleziono gry o podanym ID");
+        return null;
+    }
 
     return (
         <Box sx={{ p: 3, maxWidth: 700, margin: 'auto' }}>
@@ -100,51 +101,56 @@ export default function BoardGameDetails() {
                         {boardGame.description}
                     </Typography>
                 </CardContent>
+
                 <CardActions>
-                    <Stack direction="row" spacing={2}>
-                        <Tooltip title={!auth.isAuthenticated ? "Musisz być zalogowany, aby stworzyć sesję" : ""}>
-                            <Box display="inline-flex">
+                    {!boardGame.discontinued ? (
+                        <Stack direction="row" spacing={2}>
+                            <Tooltip title={!auth.isAuthenticated ? "Musisz być zalogowany, aby stworzyć sesję" : ""}>
+                                <Box display="inline-flex">
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        component={RouterLink}
+                                        to="/sessions/add"
+                                        disabled={!auth.isAuthenticated}
+                                    >
+                                        Stwórz sesję
+                                    </Button>
+                                </Box>
+                            </Tooltip>
+
+                            {auth.isAuthenticated && (
+                                <>
+                                    <Button
+                                        size="medium"
+                                        color="secondary"
+                                        onClick={() => navigate(`/boardgames/edit/${boardGame.id}`)}
+                                    >
+                                        Edytuj
+                                    </Button>
+                                    <Button
+                                        size="medium"
+                                        color="error"
+                                        onClick={handleDelete}
+                                    >
+                                        Usuń
+                                    </Button>
+                                </>
+                            )}
+
+                            {boardGame.rulebookUrl && (
                                 <Button
-                                    size="small"
-                                    variant="contained"
-                                    component={RouterLink}
-                                    to="/sessions/add"
-                                    disabled={!auth.isAuthenticated}
+                                    size="medium"
+                                    color="info"
+                                    href={boardGame.rulebookUrl}
                                 >
-                                    Stwórz sesję
+                                    Instrukcja
                                 </Button>
-                            </Box>
-                        </Tooltip>
-
-                        {auth.isAuthenticated && (
-                            <>
-                            <Button
-                                size="medium"
-                                color="secondary"
-                                onClick={() => navigate(`/boardgames/edit/${boardGame.id}`)}
-                            >
-                                Edytuj
-                            </Button>
-                            <Button
-                            size="medium"
-                            color="error"
-                            onClick={handleDelete}
-                            >
-                                Usuń
-                            </Button>
-                            </>
-                        )}
-
-                        {!boardGame.rulebookUrl && (
-                            <Button
-                                size="medium"
-                                color="info"
-                                href={boardGame.rulebookUrl}
-                            >
-                                Pobierz instrukcję
-                            </Button>
-                        )}
-                    </Stack>
+                            )}
+                        </Stack>
+                    ) : (
+                        <Alert severity="info">Gra nie jest już dostępna</Alert>
+                    )}
                 </CardActions>
             </Card>
         </Box>

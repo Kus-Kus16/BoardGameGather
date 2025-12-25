@@ -1,24 +1,23 @@
 import { Card, CardContent, CardActions, Typography, Button, CardActionArea, CardMedia, Tooltip, Box } from "@mui/material";
-import type { BoardGameType } from "../../types/BoardGameType.ts";
+import type { BoardGameTypeFull } from "../../types/BoardGameType.ts";
 import { Link as RouterLink } from "react-router-dom";
-import {useContext, useState} from "react";
+import {useContext} from "react";
 import {AuthContext} from "../../auth/AuthContext.tsx";
 import {ImageNotSupported} from "@mui/icons-material";
 
-export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameType }) {
+export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameTypeFull }) {
     const auth = useContext(AuthContext);
-    const [imagePreview] = useState<string>("");
 
     return (
         <Card sx={{ minWidth: 240, maxWidth: 345 }}>
             <CardActionArea component={RouterLink} to={`/boardgames/${boardGame.id}`}>
 
-                {imagePreview ? (
+                {boardGame.imageUrl ? (
                     <CardMedia
                         component="img"
                         height="140"
-                        image={imagePreview}
-                        alt="Podgląd obrazka"
+                        image={boardGame.imageUrl}
+                        alt={boardGame.title}
                     />
                 ) : (
                     <Box

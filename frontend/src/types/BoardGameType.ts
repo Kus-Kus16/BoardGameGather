@@ -1,11 +1,15 @@
-export interface BoardGameType {
-    id: number;
+export interface BoardGameTypeAdd {
     title: string;
-    description: string;
+    description?: string;
     minPlayers: number;
     maxPlayers: number;
     minutesPlaytime: number;
-    imageUrl: string;
+}
+
+export interface BoardGameTypeFull extends BoardGameTypeAdd {
+    id: number;
+    discontinued: boolean;
+    imageUrl?: string;
     rulebookUrl?: string;
 }
 
