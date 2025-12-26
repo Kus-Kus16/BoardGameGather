@@ -1,16 +1,21 @@
 import { Card, CardContent, CardActions, Typography, Button, CardActionArea, CardMedia, Tooltip, Box } from "@mui/material";
-import type { BoardGameTypeFull } from "../../types/BoardGameType.ts";
+import type { BoardGameTypeFull } from "../types/BoardGameType.ts";
 import { Link as RouterLink } from "react-router-dom";
 import {useContext} from "react";
-import {AuthContext} from "../../auth/AuthContext.tsx";
+import {AuthContext} from "../auth/AuthContext.tsx";
 import {ImageNotSupported} from "@mui/icons-material";
 
-export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameTypeFull }) {
+interface BoardGamePreviewProps {
+    boardGame: BoardGameTypeFull;
+    showActions: boolean;
+}
+
+export default function BoardGamePreview({ boardGame, showActions }: BoardGamePreviewProps) {
     const auth = useContext(AuthContext);
 
     return (
         <Card sx={{ minWidth: 240, maxWidth: 345 }}>
-            <CardActionArea component={RouterLink} to={`/boardgames/${boardGame.id}`}>
+            <CardActionArea component={RouterLink} to={`/boardgames/${boardGame.id}`} sx={{ height: "100%" }}>
 
                 {boardGame.imageUrl ? (
                     <CardMedia
@@ -45,21 +50,25 @@ export default function BoardGamePreview({ boardGame }: { boardGame: BoardGameTy
                     </Typography>
                 </CardContent>
             </CardActionArea>
-            <CardActions>
-                <Tooltip title={auth.isAuthenticated ? "" : "Musisz być zalogowany, aby stworzyć sesję"}>
-                    <Box display="inline-flex">
-                        <Button
-                            size="small"
-                            color="primary"
-                            component={RouterLink}
-                            to="/sessions/add"
-                            disabled={!auth.isAuthenticated}
-                        >
-                            Stwórz sesję
-                        </Button>
-                    </Box>
-                </Tooltip>
-            </CardActions>
+
+            {showActions && (
+                <CardActions>
+                    <Tooltip title={auth.isAuthenticated ? "" : "Musisz być zalogowany, aby stworzyć sesję"}>
+                        <Box display="inline-flex">
+                            <Button
+                                size="small"
+                                color="primary"
+                                component={RouterLink}
+                                to="/sessions/add"
+                                disabled={!auth.isAuthenticated}
+                            >
+                                Stwórz sesję
+                            </Button>
+                        </Box>
+                    </Tooltip>
+                </CardActions>
+            )}
+
         </Card>
     );
 }

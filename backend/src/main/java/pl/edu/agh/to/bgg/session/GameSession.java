@@ -14,6 +14,7 @@ public class GameSession {
     public static final String TABLE_NAME = "game_sessions";
     public static class Columns {
         public static final String ID = "id";
+        public static final String TITLE = "title";
         public static final String DATE = "date";
         public static final String NUMBER_OF_PLAYERS = "number_of_players";
         public static final String DESCRIPTION = "description";
@@ -32,13 +33,16 @@ public class GameSession {
     @Column(name = Columns.ID)
     private int id;
 
+    @Column(name = Columns.TITLE, nullable = false)
+    private String title;
+
     @Column(name = Columns.DATE, nullable = false)
     private LocalDate date;
 
     @Column(name = Columns.NUMBER_OF_PLAYERS, nullable = false)
     private int numberOfPlayers;
 
-    @Column(name = Columns.DESCRIPTION)
+    @Column(name = Columns.DESCRIPTION, columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne(optional = false)
@@ -63,7 +67,8 @@ public class GameSession {
     )
     private final List<User> participants = new ArrayList<>();
 
-    public GameSession(LocalDate date, int numberOfPlayers, String description, BoardGame boardGame, User owner) {
+    public GameSession(String title, LocalDate date, int numberOfPlayers, String description, BoardGame boardGame, User owner) {
+        this.title = title;
         this.date = date;
         this.numberOfPlayers = numberOfPlayers;
         this.description = description;
@@ -77,6 +82,10 @@ public class GameSession {
 
     public int getId() {
         return id;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public BoardGame getBoardGame() {

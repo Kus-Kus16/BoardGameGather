@@ -142,8 +142,12 @@ export default function BoardGameForm(props: BoardGameFormProps) {
         props.onSubmit(form, setError, setErrorSeverity);
     };
 
+    if (props.initialData?.discontinued) {
+        return <Alert severity={"error"}>Gra nie jest już dostępna</Alert>
+    }
+
     return (
-        <Box sx={{ p: 3, maxWidth: 700, margin: "auto" }}>
+        <Box sx={{ maxWidth: 700, margin: "auto" }}>
             <Card>
                 {imagePreview ? (
                     <CardMedia

@@ -9,7 +9,14 @@ const theme = createTheme({
     palette: {
         primary: {
             main: "#1976d2",
-            contrastText: "#fff"
+            contrastText: "#fff",
+        },
+    },
+    components: {
+        MuiCard: {
+            defaultProps: {
+                elevation: 4,
+            },
         },
     },
 });

@@ -11,6 +11,9 @@ public record GameSessionCreateDTO(
         @NotNull(message = "boardGameId must not be null")
         int boardGameId,
 
+        @NotBlank(message = "Title must not be blank")
+        String title,
+
         @NotBlank(message = "ownerUsername must not be blank")
         String ownerUsername,
 

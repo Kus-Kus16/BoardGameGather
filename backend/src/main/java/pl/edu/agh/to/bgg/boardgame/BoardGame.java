@@ -23,7 +23,7 @@ public class BoardGame {
     @Column(name = Columns.TITLE, nullable = false)
     private String title;
 
-    @Column(name = Columns.DESCRIPTION)
+    @Column(name = Columns.DESCRIPTION, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = Columns.MIN_PLAYERS, nullable = false)

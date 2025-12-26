@@ -49,9 +49,10 @@ public class DatabaseCreator {
         User u3 = new User("kmicic");
 
         GameSession s1 = new GameSession(
+                "Rozgrywka z dziekanem",
                 LocalDate.now().plusDays(1),
                 4,
-                "Rozgrywka z dziekanem",
+                "Niepowtarzalna okazja",
                 bg1,
                 u1
         );
@@ -60,22 +61,43 @@ public class DatabaseCreator {
         s1.getParticipants().add(u3);
 
         GameSession s2 = new GameSession(
+                "Dwuosobowa kooperacja",
                 LocalDate.now().plusWeeks(1),
                 2,
-                "Dwuosobowa kooperacja",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sit amet mi est. Nunc tristique faucibus sapien, eleifend mattis augue euismod nec. Etiam accumsan et purus id fermentum. Fusce pellentesque nibh at orci lacinia semper. Cras nec risus ut lacus tempus ullamcorper. Nulla consequat odio eget neque interdum iaculis. Duis nisi diam, condimentum in lacus nec, condimentum sodales risus. Donec iaculis odio eu orci bibendum, eu luctus justo blandit.",
                 bg2,
                 u2
         );
         s2.getParticipants().add(u2);
 
+        GameSession s3 = new GameSession(
+                "Stara sesja",
+                LocalDate.now().minusMonths(1),
+                2,
+                "Bardzo stara",
+                bg2,
+                u2
+        );
+        s3.getParticipants().add(u2);
+
+        GameSession s4 = new GameSession(
+                "Pełna sesja",
+                LocalDate.now().plusWeeks(1),
+                1,
+                "Solowa rozgrywka",
+                bg2,
+                u3
+        );
+        s4.getParticipants().add(u3);
+
         boardGameRepository.saveAll(List.of(bg1, bg2));
         userRepository.saveAll(List.of(u1, u2, u3));
-        gameSessionRepository.saveAll(List.of(s1, s2));
+        gameSessionRepository.saveAll(List.of(s1, s2, s3, s4));
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 10; i++) {
             BoardGame bg = new BoardGame(
                     "Lorem",
-                    "Ipsum",
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sit amet mi est. Nunc tristique faucibus sapien, eleifend mattis augue euismod nec. Etiam accumsan et purus id fermentum. Fusce pellentesque nibh at orci lacinia semper. Cras nec risus ut lacus tempus ullamcorper. Nulla consequat odio eget neque interdum iaculis. Duis nisi diam, condimentum in lacus nec, condimentum sodales risus. Donec iaculis odio eu orci bibendum, eu luctus justo blandit.",
                     1,
                     4,
                     90

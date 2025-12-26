@@ -65,9 +65,8 @@ export default function BoardGameDetails() {
     }
 
     return (
-        <Box sx={{ p: 3, maxWidth: 700, margin: 'auto' }}>
+        <Box sx={{ p: 3, margin: 'auto' }}>
             <Card>
-
                 {imagePreview ? (
                     <CardMedia
                         component="img"
@@ -89,7 +88,7 @@ export default function BoardGameDetails() {
                     </Box>
                 )}
 
-                <CardContent>
+                <CardContent sx={{p: 3}}>
                     <Typography variant="h4" gutterBottom>{boardGame.title}</Typography>
                     <Typography variant="body1" sx={{ color: 'text.secondary', mb: 1 }}>
                         Gracze: {boardGame.minPlayers} - {boardGame.maxPlayers}
@@ -102,7 +101,7 @@ export default function BoardGameDetails() {
                     </Typography>
                 </CardContent>
 
-                <CardActions>
+                <CardActions sx={{p: 3}}>
                     {!boardGame.discontinued ? (
                         <Stack direction="row" spacing={2}>
                             <Tooltip title={!auth.isAuthenticated ? "Musisz być zalogowany, aby stworzyć sesję" : ""}>

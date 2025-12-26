@@ -47,6 +47,11 @@ public class GameSessionService {
                 .findByIdWithDetails(sessionId)
                 .orElseThrow(GameSessionNotFoundException::new);
 
+        if (gameSession.getDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("GameSession has already taken place");
+        }
+
+
         User owner = gameSession.getOwner();
 
         if (owner.getUsername().equals(username)) {
@@ -91,6 +96,7 @@ public class GameSessionService {
                 .orElseThrow(UserNotFoundException::new);
 
         GameSession gameSession = new GameSession(
+                dto.title(),
                 dto.date(),
                 dto.numberOfPlayers(),
                 dto.description(),
