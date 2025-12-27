@@ -1,15 +1,9 @@
-import {Box, Chip, Divider, Stack, Typography } from "@mui/material";
-import type {GameSessionType} from "../types/GameSessionType.ts";
+import { Chip, Divider, Stack, Typography } from "@mui/material";
+import type {GameSessionTypeFull} from "../types/GameSessionType.ts";
 import { StarBorder } from '@mui/icons-material';
-import {useContext} from "react";
-import {AuthContext} from "../auth/AuthContext.tsx";
 
-export default function GameSessionInfo({ session }: { session: GameSessionType }) {
-    const auth = useContext(AuthContext);
-
+export default function GameSessionInfo({ session }: { session: GameSessionTypeFull }) {
     const isPastSession = new Date(session.date) < new Date();
-    const isParticipant = session.participants
-        .find((u) => u.username === auth.username) != null;
     const isFull = session.participants.length >= session.numberOfPlayers;
 
     session.ownerId = session.owner.id; // TODO remove after api fix

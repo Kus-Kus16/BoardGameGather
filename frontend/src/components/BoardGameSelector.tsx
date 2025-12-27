@@ -1,0 +1,118 @@
+import React, {useEffect, useState } from "react";
+import type {BoardGameTypeFull} from "../types/BoardGameType.ts";
+import api from "../api/axios.tsx";
+import { TextField, Autocomplete, Stack, Chip } from "@mui/material";
+
+interface BoardGameSelectorProps {
+    selectedBoardGames: BoardGameTypeFull[];
+    setSelectedBoardGames: React.Dispatch<React.SetStateAction<BoardGameTypeFull[]>>;
+    setMinPlayersGame: React.Dispatch<React.SetStateAction<BoardGameTypeFull | undefined>>;
+    setMaxPlayersGame: React.Dispatch<React.SetStateAction<BoardGameTypeFull | undefined>>;
+    fieldErrors?: {
+        games?: string;
+    };
+}
+
+export default function BoardGameSelector({ selectedBoardGames, setSelectedBoardGames, setMinPlayersGame,
+                                              setMaxPlayersGame, fieldErrors }: BoardGameSelectorProps) {
+
+    const [allBoardGames, setAllBoardGames] = useState<BoardGameTypeFull[]>([]);
+    const [inputValue, setInputValue] = useState("");
+
+    useEffect(() => {
+        const fetchBoardGames = async () => {
+            try {
+                const res = await api.get<BoardGameTypeFull[]>("/boardgames");
+                setAllBoardGames(res.data);
+
+                // if (initialData?.boardGamesIds) {
+                //     const selected = res.data.filter(bg => initialData.boardGamesIds.includes(bg.id));
+                //     setSelectedBoardGames(selected);
+                // }
+            } catch (err) {
+                console.error("Nie udało się pobrać listy gier", err);
+            }
+        };
+        fetchBoardGames().then();
+    }, []);
+
+    const availableGames = allBoardGames.filter(bg => !selectedBoardGames.some(s => s.id === bg.id));
+
+    const addGame = (game: BoardGameTypeFull) => {
+        if (!selectedBoardGames.some(bg => bg.id === game.id)) {
+            setSelectedBoardGames(prev => [...prev, game]);
+            setMinPlayersGame(prev => !prev ? game : (game.minPlayers > prev.minPlayers ? game : prev));
+            setMaxPlayersGame(prev => !prev ? game : (game.maxPlayers < prev.maxPlayers ? game : prev));
+        }
+        setInputValue("");
+    };
+
+    const removeGame = (game: BoardGameTypeFull) => {
+        setSelectedBoardGames(prev => {
+            const updated = prev.filter(bg => bg.id !== game.id);
+
+            if (updated.length === 0) {
+                setMinPlayersGame(undefined);
+                setMaxPlayersGame(undefined);
+            } else {
+                setMinPlayersGame(updated.reduce((acc, g) => g.minPlayers > acc.minPlayers ? g : acc, updated[0]));
+                setMaxPlayersGame(updated.reduce((acc, g) => g.maxPlayers < acc.maxPlayers ? g : acc, updated[0]));
+            }
+
+            return updated;
+        });
+    };
+
+    const removeAllGames = () => {
+        setSelectedBoardGames([]);
+        setMinPlayersGame(undefined);
+        setMaxPlayersGame(undefined);
+    };
+
+    return (
+        <>
+            <Autocomplete
+                options={availableGames}
+                getOptionLabel={(option) => option.title}
+                inputValue={inputValue}
+                onInputChange={(_, newValue) => setInputValue(newValue)}
+                onChange={(_, value) => value && addGame(value)}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        placeholder="Wyszukaj grę"
+                        error={!!fieldErrors?.games}
+                        helperText={fieldErrors?.games}
+                    />
+                )}
+                disableClearable
+                disableCloseOnSelect
+                openOnFocus
+                autoComplete
+            />
+
+            <Stack direction="row" gap={1} flexWrap="wrap" mt={1}>
+                {selectedBoardGames.map(game => (
+                    <Chip
+                        key={game.id}
+                        label={game.title}
+                        onDelete={() => removeGame(game)}
+                        color="secondary"
+                        variant="outlined"
+                        sx={{ mb: 1 }}
+                    />
+                ))}
+
+                {selectedBoardGames.length > 0 && (
+                    <Chip
+                        label="Wyczyść"
+                        onClick={removeAllGames}
+                        color="error"
+                        variant="filled"
+                        sx={{ mb: 1 }}
+                    />
+                )}
+            </Stack>
+        </>
+    );
+}

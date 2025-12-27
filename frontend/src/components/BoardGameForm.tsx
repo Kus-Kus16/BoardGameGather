@@ -11,10 +11,10 @@ import {
     Alert,
     Chip, type AlertColor
 } from "@mui/material";
-import React, {useRef, useState} from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImageNotSupported, PictureAsPdf, Photo } from '@mui/icons-material';
-import type {BoardGameTypeFull} from "../types/BoardGameType.ts";
+import type { BoardGameTypeFull } from "../types/BoardGameType.ts";
 
 export interface BoardGameFormData {
     title: string;
@@ -32,10 +32,12 @@ export interface BoardGameFormData {
 
 export interface BoardGameFormProps {
     initialData?: BoardGameTypeFull;
-    onSubmit: (formData: BoardGameFormData,
-               setError: (msg: string) => void,
-               setSeverity: (msg: AlertColor) => void)
-        => void;
+    initialWarning?: string;
+    onSubmit: (
+        formData: BoardGameFormData,
+        setError: (msg: string) => void,
+        setSeverity: (msg: AlertColor) => void
+    ) => void;
     formTitle: string;
     disableEdit: boolean;
 }
@@ -44,7 +46,6 @@ const MAX_PDF_SIZE_MB = 10;
 const MAX_IMAGE_SIZE_MB = 5;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
-// Todo General check after api added
 export default function BoardGameForm(props: BoardGameFormProps) {
     const navigate = useNavigate();
     const imgInputRef = useRef<HTMLInputElement | null>(null);
@@ -62,13 +63,18 @@ export default function BoardGameForm(props: BoardGameFormProps) {
         existingRulebookUrl: props.initialData?.rulebookUrl
     });
 
-    const [error, setError] = useState("");
-    const [errorSeverity, setErrorSeverity] = useState<AlertColor>("error");
+    const [error, setError] = useState(props.initialWarning || "");
+    const [errorSeverity, setErrorSeverity] = useState<AlertColor>("warning");
+    const [fieldErrors, setFieldErrors] = useState<{
+        title?: string;
+        minPlayers?: string;
+        maxPlayers?: string;
+        minutesPlaytime?: string;
+    }>({});
+
     const [imagePreview, setImagePreview] = useState<string>(props.initialData?.imageUrl || "");
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
         setForm(prev => ({
@@ -81,9 +87,7 @@ export default function BoardGameForm(props: BoardGameFormProps) {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
         if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
             setErrorSeverity("error");
@@ -94,7 +98,7 @@ export default function BoardGameForm(props: BoardGameFormProps) {
 
         if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
             setErrorSeverity("error");
-            setError(`Plik nie może być większy niż ${MAX_IMAGE_SIZE_MB} MB`)
+            setError(`Plik nie może być większy niż ${MAX_IMAGE_SIZE_MB} MB`);
             e.target.value = '';
             return;
         }
@@ -105,9 +109,7 @@ export default function BoardGameForm(props: BoardGameFormProps) {
 
     const handleRulebookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
         if (file.type !== 'application/pdf') {
             setErrorSeverity("error");
@@ -118,7 +120,7 @@ export default function BoardGameForm(props: BoardGameFormProps) {
 
         if (file.size > MAX_PDF_SIZE_MB * 1024 * 1024) {
             setErrorSeverity("error");
-            setError(`Plik nie może być większy niż ${MAX_PDF_SIZE_MB} MB`)
+            setError(`Plik nie może być większy niż ${MAX_PDF_SIZE_MB} MB`);
             e.target.value = '';
             return;
         }
@@ -130,20 +132,42 @@ export default function BoardGameForm(props: BoardGameFormProps) {
         setForm(prev => ({ ...prev, existingImageUrl: undefined, imageFile: null }));
         setImagePreview("");
         if (imgInputRef.current) imgInputRef.current.value = "";
-    }
+    };
 
     const removeExistingRulebook = () => {
         setForm(prev => ({ ...prev, existingRulebookUrl: undefined, rulebookFile: null }));
         if (pdfInputRef.current) pdfInputRef.current.value = "";
     };
 
+    const validateFields = () => {
+        const errors: typeof fieldErrors = {};
+
+        if (!form.title.trim()) {
+            errors.title = "Tytuł jest wymagany";
+        }
+        if (form.minPlayers < 1) {
+            errors.minPlayers = "Minimalna liczba graczy to 1";
+        }
+        if (form.maxPlayers < form.minPlayers) {
+            errors.maxPlayers = "Maksimum graczy nie może być mniejsze niż minimum";
+        }
+        if (form.minutesPlaytime < 1) {
+            errors.minutesPlaytime = "Czas gry musi być większy niż 0";
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        props.onSubmit(form, setError, setErrorSeverity);
+        if (validateFields()) {
+            props.onSubmit(form, setError, setErrorSeverity);
+        }
     };
 
     if (props.initialData?.discontinued) {
-        return <Alert severity={"error"}>Gra nie jest już dostępna</Alert>
+        return <Alert severity={"error"}>Gra nie jest już dostępna</Alert>;
     }
 
     return (
@@ -186,6 +210,8 @@ export default function BoardGameForm(props: BoardGameFormProps) {
                             required
                             fullWidth
                             disabled={props.disableEdit}
+                            error={!!fieldErrors.title}
+                            helperText={fieldErrors.title}
                         />
 
                         <TextField
@@ -216,6 +242,8 @@ export default function BoardGameForm(props: BoardGameFormProps) {
                                 required
                                 fullWidth
                                 disabled={props.disableEdit}
+                                error={!!fieldErrors.minPlayers}
+                                helperText={fieldErrors.minPlayers}
                             />
 
                             <TextField
@@ -235,6 +263,8 @@ export default function BoardGameForm(props: BoardGameFormProps) {
                                 required
                                 fullWidth
                                 disabled={props.disableEdit}
+                                error={!!fieldErrors.maxPlayers}
+                                helperText={fieldErrors.maxPlayers}
                             />
                         </Stack>
 
@@ -245,16 +275,12 @@ export default function BoardGameForm(props: BoardGameFormProps) {
                             value={form.minutesPlaytime}
                             onChange={handleChange}
                             slotProps={{
-                                input: {
-                                    inputProps: {
-                                        min: 1,
-                                        max: 600
-                                    }
-                                }
+                                input: { inputProps: { min: 1, max: 600 } }
                             }}
                             required
                             fullWidth
-                            disabled={props.disableEdit}
+                            error={!!fieldErrors.minutesPlaytime}
+                            helperText={fieldErrors.minutesPlaytime}
                         />
 
                         <Button variant="outlined" component="label">
@@ -318,4 +344,4 @@ export default function BoardGameForm(props: BoardGameFormProps) {
             </Card>
         </Box>
     );
-};
+}

@@ -1,5 +1,5 @@
 import api from "../../api/axios.tsx";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import BoardGameForm, {type BoardGameFormData} from "../../components/BoardGameForm.tsx";
 import {useEffect, useState} from "react";
 import {Alert, type AlertColor, Box, CircularProgress} from "@mui/material";
@@ -8,10 +8,12 @@ import type {BoardGameTypeFull} from "../../types/BoardGameType.ts";
 export default function BoardGameEdit() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [error, setError] = useState<string | null>(null);
-    const [initialData, setInitialData] = useState<BoardGameTypeFull | undefined>(undefined);
     const [loading, setLoading] = useState(true);
+    const [initialData, setInitialData] = useState<BoardGameTypeFull | undefined>(undefined);
+    const [initialWarning, setInitialWarning] = useState<string>("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,7 +30,17 @@ export default function BoardGameEdit() {
         fetchData().then();
     }, [id]);
 
-    const handleEdit = async (formData: BoardGameFormData, setError: (msg: string) => void, setErrorSeverity: (msg: AlertColor) => void) => {
+    useEffect(() => {
+        if (location.state?.fileUploadError) {
+            setInitialWarning("Nie udało się dodać plików gry");
+        }
+    }, [location.state]);
+
+    const handleEdit = async (
+        formData: BoardGameFormData,
+        setError: (msg: string) => void,
+        setErrorSeverity: (msg: AlertColor) => void,
+    ) => {
         try {
             await api.patch(`/boardgames/${id}`, {
                 title: formData.title,
@@ -89,5 +101,6 @@ export default function BoardGameEdit() {
         return null
     }
 
-    return <BoardGameForm initialData={initialData} onSubmit={handleEdit} formTitle={"Edytuj grę"} disableEdit={true}/>
+    return <BoardGameForm initialData={initialData} initialWarning={initialWarning}
+                          onSubmit={handleEdit} formTitle={"Edytuj grę"} disableEdit={true}/>
 }

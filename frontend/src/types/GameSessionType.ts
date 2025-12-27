@@ -2,12 +2,19 @@ import type { BoardGameTypeFull } from "./BoardGameType.ts";
 import type {UserType} from "./UserType.ts";
 import type {VoteType} from "./VoteType.ts";
 
-export interface GameSessionType {
+interface GameSessionTypeBasic {
+    title: string;
+    date: string;
+    numberOfPlayers: number;
+    description: string;
+}
+
+export interface GameSessionTypeAdd extends GameSessionTypeBasic {
+    boardGamesIds: number[];
+}
+
+export interface GameSessionTypeFull extends GameSessionTypeBasic {
   id: number;
-  title: string;
-  date: string;
-  numberOfPlayers: number;
-  description: string;
 
   ownerId: number;
   participants: UserType[];
@@ -17,9 +24,3 @@ export interface GameSessionType {
 
   votes: VoteType[];
 }
-
-/*
-* Dla listowania: Tytuł, Data, pozostałe miejsca, Stan sesji: {wybrana planszówka/głosowanie aktywne}
-* Dla detailsów: -||- oraz opis, właściciel, lista graczy, lista gier z możliwością głosowania, wyniki głosowania,
-*   przyciski: dołącz/opuść
-* */

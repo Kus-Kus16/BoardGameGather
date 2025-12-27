@@ -8,7 +8,7 @@ export default function MainLayout() {
         <Box sx={{ display: "flex", flexDirection: "column", m: "16px", mb: "32px"}}>
             <Navbar />
 
-            <Paper sx={{ minHeight: "94vh", p: 3 }} elevation={2}>
+            <Paper sx={{ p: 3, minHeight: "calc(100vh - 48px)", boxSizing: "border-box"}} elevation={2}>
                 <Box sx={{ flex: 1, mt: "32px", overflowY: "auto", p: 3 }}>
                     <Outlet />
                 </Box>

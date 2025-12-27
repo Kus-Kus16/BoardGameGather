@@ -1,28 +1,30 @@
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import {
     Box,
     Typography,
     Divider,
     CircularProgress,
     Alert,
-    Stack,
 } from "@mui/material";
-import {useNavigate} from "react-router-dom";
 import api from "../../api/axios"
 import type {GameSessionTypeFull} from "../../types/GameSessionType.ts";
 import GameSessionPreview from "../../components/GameSessionPreview.tsx";
-import AddElementCard from "../../components/AddElementCard.tsx";
+import {AuthContext} from "../../auth/AuthContext.tsx";
 
-export default function GameSessionList() {
+export default function GameSessionListUser() {
+    const auth = useContext(AuthContext);
     const [sessions, setSessions] = useState<GameSessionTypeFull[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchGameSessions = async () => {
+        const fetchGameSessions = async (username: string | null) => {
             try {
-                const { data } = await api.get<GameSessionTypeFull[]>('/sessions');
+                const { data } = await api.get<GameSessionTypeFull[]>('/sessions', {
+                    params: {
+                        username: username,
+                    }
+                });
                 setSessions(data);
             } catch {
                 setError("Nie udało się pobrać listy gier.");
@@ -31,14 +33,18 @@ export default function GameSessionList() {
             }
         };
 
-        fetchGameSessions().then();
-    }, []);
+        if (auth.isAuthenticated) {
+            fetchGameSessions(auth.username).then();
+        } else {
+            setError("Nie jesteś zalogowany");
+        }
+    }, [auth.isAuthenticated, auth.username]);
 
     return (
         <Box>
             <Box sx={{p: 3}}>
                 <Typography variant="h4" gutterBottom>
-                    Sesje gier
+                    Twoje sesje
                 </Typography>
                 <Divider />
             </Box>
@@ -57,14 +63,11 @@ export default function GameSessionList() {
                 )}
 
                 {!loading && !error && (
-                    <Stack spacing={3}>
-                        <AddElementCard title={"Dodaj nową sesję"}
-                                        onClick={() => navigate("/sessions/new")}/>
-
+                    <Box>
                         {sessions.map((session) => (
                             <GameSessionPreview key={session.id} session={session}/>
                         ))}
-                    </Stack>
+                    </Box>
                 )}
             </Box>
         </Box>

@@ -1,0 +1,27 @@
+import { useNavigate } from "react-router-dom";
+import GameSessionForm from "../../components/GameSessionForm.tsx";
+import type { GameSessionTypeAdd } from "../../types/GameSessionType.ts";
+import api from "../../api/axios.tsx";
+
+export default function GameSessionAdd() {
+    const navigate = useNavigate();
+
+    const handleAdd = async (
+        formData: GameSessionTypeAdd,
+        setError: (msg: string) => void
+    ) => {
+        try {
+            await api.post("/sessions", formData);
+            navigate(`/sessions`);
+        } catch {
+            setError("Nie udało się dodać sesji.");
+        }
+    };
+
+    return (
+        <GameSessionForm
+            formTitle="Dodaj nową sesję"
+            onSubmit={handleAdd}
+        />
+    );
+}

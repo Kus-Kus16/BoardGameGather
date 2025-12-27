@@ -7,15 +7,19 @@ import {
     Button,
     Tooltip,
     Stack,
-    Alert
+    Alert,
+    CardActions,
+    Chip
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import type {GameSessionType} from "../types/GameSessionType.ts";
-import {useContext} from "react";
+import type {GameSessionTypeFull} from "../types/GameSessionType.ts";
+import {useContext, useState} from "react";
 import {AuthContext} from "../auth/AuthContext.tsx";
+import GameSessionActionButtons from "./GameSessionActionButtons.tsx";
 
-export default function GameSessionPreview({ session }: { session: GameSessionType }) {
+export default function GameSessionPreview({ session }: { session: GameSessionTypeFull }) {
     const auth = useContext(AuthContext);
+    const [error, setError] = useState("");
 
     const isPastSession = new Date(session.date) < new Date();
     const isParticipant = session.participants
@@ -33,10 +37,10 @@ export default function GameSessionPreview({ session }: { session: GameSessionTy
 
     const getJoinTooltip = () => {
         if (!auth.isAuthenticated) {
-            return "Musisz być zalogowany, aby dołączyć";
+            return "Musisz być zalogowany, aby dołączyć do sesji";
         }
         if (isPastSession) {
-            return "Ta sesja już się odbyła";
+            return "Sesja już się odbyła";
         }
         if (isParticipant) {
             return "Już bierzesz udział w tej sesji";
@@ -79,50 +83,53 @@ export default function GameSessionPreview({ session }: { session: GameSessionTy
                 <Stack spacing={2}
                     sx={{
                         width: 300,
-                        m: 2,
+                        p: 2,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                     }}
                 >
+                    {/*{isPastSession && (*/}
+                    {/*    <Chip color="warning" label="Sesja już się odbyła" sx={{ width: "85%" }}/>*/}
+                    {/*)}*/}
+
+                    {/*{selectedBoardGame ? (*/}
+                    {/*    <Chip color="success" label="Gra wybrana" sx={{ width: "85%" }}/>*/}
+                    {/*) : (*/}
+                    {/*    <Chip color="info" label="Głosowanie aktywne" sx={{ width: "85%" }}/>*/}
+                    {/*)}*/}
+
+                    {/*{error && (*/}
+                    {/*    <Chip color="error" label={error} sx={{ width: "85%" }}/>*/}
+                    {/*)}*/}
                     {isPastSession && (
-                        <Alert severity="warning" sx={{ width: "100%" }}>
+                        <Alert severity="warning" sx={{ width: "85%" }}>
                             Sesja już się odbyła
                         </Alert>
                     )}
 
                     {selectedBoardGame ? (
-                        <Alert severity="success" sx={{ width: "100%" }} >
+                        <Alert severity="success" sx={{ width: "85%" }} >
                             Gra wybrana
                         </Alert>
                     ) : (
-                        <Alert severity="info" sx={{ width: "100%" }}>
+                        <Alert severity="info" sx={{ width: "85%" }}>
                             Głosowanie aktywne
                         </Alert>
                     )}
+
+                    {error && (
+                        <Alert severity="error" sx={{ width: "85%" }}>
+                            {error}
+                        </Alert>
+                    )}
                 </Stack>
-
-                <Box display="flex" alignItems="center" p={2}>
-                    <Tooltip
-                        title={getJoinTooltip()}
-                    >
-                        <span>
-                            <Button
-                              size="large"
-                              variant={isDisabled ? "outlined" : "contained"}
-                              color="primary"
-                              component={RouterLink}
-                              to={`/sessions/join/${session.id}`}
-                              disabled={isDisabled}
-                            >
-                            Dołącz
-                            </Button>
-                        </span>
-                    </Tooltip>
-                </Box>
-
             </CardActionArea>
-
+            <CardActions>
+                <Box display="flex" alignItems="center" p={2}>
+                    <GameSessionActionButtons session={session} setError={setError}/>
+                </Box>
+            </CardActions>
         </Card>
     );
 };

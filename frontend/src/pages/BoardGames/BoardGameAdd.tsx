@@ -6,7 +6,11 @@ import type {AlertColor} from "@mui/material";
 export default function BoardGameAdd() {
     const navigate = useNavigate();
 
-    const handleAdd = async (formData: BoardGameFormData, setError: (msg: string) => void, setErrorSeverity: (msg: AlertColor) => void) => {
+    const handleAdd = async (
+        formData: BoardGameFormData,
+        setError: (msg: string) => void,
+        setErrorSeverity: (msg: AlertColor) => void,
+    ) => {
         let id;
         try {
             const res = await api.post("/boardgames", {
@@ -40,8 +44,9 @@ export default function BoardGameAdd() {
 
             navigate("/boardgames");
         } catch {
-            setErrorSeverity("warning");
-            setError("Nie udało się dodać plików gry.")
+            navigate(`/boardgames/${id}/edit`, {
+                state: { fileUploadError: true }
+            });
         }
     }
 

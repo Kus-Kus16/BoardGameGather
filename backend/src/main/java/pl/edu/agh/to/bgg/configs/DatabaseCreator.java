@@ -96,7 +96,7 @@ public class DatabaseCreator {
 
         for (int i = 0; i < 10; i++) {
             BoardGame bg = new BoardGame(
-                    "Lorem",
+                    "Lorem " + i,
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sit amet mi est. Nunc tristique faucibus sapien, eleifend mattis augue euismod nec. Etiam accumsan et purus id fermentum. Fusce pellentesque nibh at orci lacinia semper. Cras nec risus ut lacus tempus ullamcorper. Nulla consequat odio eget neque interdum iaculis. Duis nisi diam, condimentum in lacus nec, condimentum sodales risus. Donec iaculis odio eu orci bibendum, eu luctus justo blandit.",
                     1,
                     4,

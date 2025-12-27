@@ -5,11 +5,12 @@ import BoardGames from "../pages/BoardGames/BoardGameList";
 import BoardGameDetails from "../pages/BoardGames/BoardGameDetails.tsx";
 import GameSessions from "../pages/GameSessions/GameSessionList.tsx";
 import GameSessionInsight from "../pages/GameSessions/GameSessionDetails.tsx";
-import UserSessions from "../pages/GameSessions/UserSessions";
 import HomePage from "../pages/HomePage.tsx";
 import AuthPage from "../pages/Auth/AuthPage.tsx";
 import BoardGameAdd from "../pages/BoardGames/BoardGameAdd.tsx";
 import BoardGameEdit from "../pages/BoardGames/BoardGameEdit.tsx";
+import GameSessionListUser from "../pages/GameSessions/GameSessionListUser.tsx";
+import GameSessionAdd from "../pages/GameSessions/GameSessionAdd.tsx";
 
 export default function AppRouter() {
     return (
@@ -30,9 +31,10 @@ export default function AppRouter() {
 
                 {/* PROTECTED CRUD */}
                 <Route element={<RequireAuth />}>
-                    <Route path="/sessions/user" element={<UserSessions />} />
                     <Route path="/boardgames/new" element={<BoardGameAdd />} />
-                    <Route path="/boardgames/edit/:id" element={<BoardGameEdit />} />
+                    <Route path="/boardgames/:id/edit" element={<BoardGameEdit />} />
+                    <Route path="/sessions/user" element={<GameSessionListUser />} />
+                    <Route path="/sessions/new" element={<GameSessionAdd/>} />
                 </Route>
 
             </Route>

@@ -7,4 +7,12 @@ const api = axios.create({
     },
 });
 
+api.interceptors.request.use((config) => {
+    const login = localStorage.getItem('username')
+    if (login) {
+        config.headers['X-User-Login'] = login
+    }
+    return config
+})
+
 export default api;
