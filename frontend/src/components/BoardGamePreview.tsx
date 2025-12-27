@@ -59,7 +59,7 @@ export default function BoardGamePreview({ boardGame, showActions }: BoardGamePr
                                 size="small"
                                 color="primary"
                                 component={RouterLink}
-                                to="/sessions/add"
+                                to={`/sessions/new?boardGameId=${boardGame.id}`}
                                 disabled={!auth.isAuthenticated}
                             >
                                 Stwórz sesję

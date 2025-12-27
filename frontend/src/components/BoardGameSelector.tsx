@@ -11,10 +11,11 @@ interface BoardGameSelectorProps {
     fieldErrors?: {
         games?: string;
     };
+    initialBoardGameId?: number;
 }
 
 export default function BoardGameSelector({ selectedBoardGames, setSelectedBoardGames, setMinPlayersGame,
-                                              setMaxPlayersGame, fieldErrors }: BoardGameSelectorProps) {
+                                              setMaxPlayersGame, fieldErrors, initialBoardGameId }: BoardGameSelectorProps) {
 
     const [allBoardGames, setAllBoardGames] = useState<BoardGameTypeFull[]>([]);
     const [inputValue, setInputValue] = useState("");
@@ -25,16 +26,21 @@ export default function BoardGameSelector({ selectedBoardGames, setSelectedBoard
                 const res = await api.get<BoardGameTypeFull[]>("/boardgames");
                 setAllBoardGames(res.data);
 
-                // if (initialData?.boardGamesIds) {
-                //     const selected = res.data.filter(bg => initialData.boardGamesIds.includes(bg.id));
-                //     setSelectedBoardGames(selected);
-                // }
+                if (initialBoardGameId) {
+                    const game = res.data.find(bg => bg.id === initialBoardGameId);
+
+                    if (game) {
+                        setSelectedBoardGames([game]);
+                        setMinPlayersGame(game);
+                        setMaxPlayersGame(game);
+                    }
+                }
             } catch (err) {
                 console.error("Nie udało się pobrać listy gier", err);
             }
         };
         fetchBoardGames().then();
-    }, []);
+    }, [initialBoardGameId, setMaxPlayersGame, setMinPlayersGame, setSelectedBoardGames]);
 
     const availableGames = allBoardGames.filter(bg => !selectedBoardGames.some(s => s.id === bg.id));
 

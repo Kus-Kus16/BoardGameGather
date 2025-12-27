@@ -112,7 +112,7 @@ export default function BoardGameDetails() {
                                             size="small"
                                             variant="contained"
                                             component={RouterLink}
-                                            to="/sessions/add"
+                                            to={`/sessions/new?boardGameId=${boardGame.id}`}
                                             disabled={!auth.isAuthenticated}
                                         >
                                             Stwórz sesję

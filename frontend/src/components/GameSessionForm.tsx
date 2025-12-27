@@ -18,6 +18,7 @@ import BoardGameSelector from "./BoardGameSelector";
 
 export interface GameSessionFormProps {
     initialData?: GameSessionTypeAdd;
+    initialBoardGameId?: number;
     onSubmit: (
         formData: GameSessionTypeAdd,
         setError: (msg: string) => void
@@ -25,7 +26,7 @@ export interface GameSessionFormProps {
     formTitle: string;
 }
 
-export default function GameSessionForm({ initialData, onSubmit, formTitle }: GameSessionFormProps) {
+export default function GameSessionForm({ initialData, initialBoardGameId, onSubmit, formTitle }: GameSessionFormProps) {
     const [form, setForm] = useState<GameSessionTypeAdd>({
         title: initialData?.title || "",
         date: initialData?.date || "",
@@ -159,6 +160,7 @@ export default function GameSessionForm({ initialData, onSubmit, formTitle }: Ga
                             setMinPlayersGame={setMinPlayersGame}
                             setMaxPlayersGame={setMaxPlayersGame}
                             fieldErrors={fieldErrors}
+                            initialBoardGameId={initialBoardGameId}
                         />
                     </Stack>
 
