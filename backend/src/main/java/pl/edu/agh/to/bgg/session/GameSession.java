@@ -18,7 +18,7 @@ public class GameSession {
         public static final String DATE = "date";
         public static final String NUMBER_OF_PLAYERS = "number_of_players";
         public static final String DESCRIPTION = "description";
-        public static final String BOARD_GAME_ID = "board_game_id";
+        public static final String BOARD_GAME_IDS = "board_game_ids";
         public static final String OWNER_ID = "owner_id";
     }
 
@@ -26,6 +26,12 @@ public class GameSession {
     public static class ParticipantsColumns {
         public static final String SESSION_ID = "session_id";
         public static final String USER_ID = "user_id";
+    }
+
+    public static final String BOARD_GAMES_TABLE_NAME = "board_game_ids";
+    public static class BoardGameIdsColumns {
+        public static final String SESSION_ID = "session_id";
+        public static final String BOARD_GAME_ID = "board_game_id";
     }
 
     @Id
@@ -45,9 +51,19 @@ public class GameSession {
     @Column(name = Columns.DESCRIPTION, columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = Columns.BOARD_GAME_ID, nullable = false)
-    private BoardGame boardGame;
+    @ManyToMany
+    @JoinTable (
+            name = BOARD_GAMES_TABLE_NAME,
+            joinColumns = @JoinColumn(
+                    name = BoardGameIdsColumns.SESSION_ID,
+                    nullable = false
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = BoardGameIdsColumns.BOARD_GAME_ID,
+                    nullable = false
+            )
+    )
+    private List<BoardGame> boardGames;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = Columns.OWNER_ID, nullable = false)
@@ -67,12 +83,12 @@ public class GameSession {
     )
     private final List<User> participants = new ArrayList<>();
 
-    public GameSession(String title, LocalDate date, int numberOfPlayers, String description, BoardGame boardGame, User owner) {
+    public GameSession(String title, LocalDate date, int numberOfPlayers, String description, List<BoardGame> boardGames, User owner) {
         this.title = title;
         this.date = date;
         this.numberOfPlayers = numberOfPlayers;
         this.description = description;
-        this.boardGame = boardGame;
+        this.boardGames = boardGames;
         this.owner = owner;
     }
 
@@ -88,8 +104,8 @@ public class GameSession {
         return title;
     }
 
-    public BoardGame getBoardGame() {
-        return boardGame;
+    public List<BoardGame> getBoardGames() {
+        return boardGames;
     }
 
     public LocalDate getDate() {

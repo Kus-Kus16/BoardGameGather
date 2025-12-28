@@ -13,6 +13,8 @@ public class BoardGame {
         public static final String MIN_PLAYERS = "min_players";
         public static final String MAX_PLAYERS = "max_players";
         public static final String MINUTES_PLAYTIME = "minutes_playtime";
+        public static final String IMAGE_URL = "image_url";
+        public static final String PDF_URL = "pdf_url";
     }
 
     @Id
@@ -34,6 +36,12 @@ public class BoardGame {
 
     @Column(name = Columns.MINUTES_PLAYTIME, nullable = false)
     private int minutesPlaytime;
+
+    @Column(name = Columns.IMAGE_URL)
+    private String imageUrl;
+
+    @Column(name = Columns.PDF_URL)
+    private String pdfUrl;
 
     public BoardGame(String title, String description, int minPlayers, int maxPlayers, int minutesPlaytime) {
         this.title = title;
@@ -69,5 +77,21 @@ public class BoardGame {
 
     public int getMinutesPlaytime() {
         return minutesPlaytime;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
     }
 }

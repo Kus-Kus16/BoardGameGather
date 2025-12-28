@@ -1,7 +1,6 @@
 package pl.edu.agh.to.bgg.session;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.BoardGameNotFoundException;
@@ -11,6 +10,7 @@ import pl.edu.agh.to.bgg.user.UserNotFoundException;
 import pl.edu.agh.to.bgg.user.UserRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,18 +77,25 @@ public class GameSessionService {
 
     @Transactional
     public GameSession addSession(GameSessionCreateDTO dto) throws BoardGameNotFoundException, UserNotFoundException {
-        BoardGame boardGame = boardGameRepository
-                .findById(dto.boardGameId())
-                .orElseThrow(BoardGameNotFoundException::new);
+        if (dto.boardGameIds().isEmpty()) throw new IllegalArgumentException("Session must contain at least one board game");
 
-        int n = dto.numberOfPlayers();
-        if (n < boardGame.getMinPlayers() || n > boardGame.getMaxPlayers()) {
-            throw new IllegalArgumentException(
-                    "Number of players must be between " +
-                    boardGame.getMinPlayers() +
-                    " and " +
-                    boardGame.getMaxPlayers()
-            );
+        List<BoardGame> boardGames = new ArrayList<>();
+
+        for (Integer boardGameId : dto.boardGameIds()) {
+            BoardGame boardGame = boardGameRepository
+                    .findById(boardGameId)
+                    .orElseThrow(BoardGameNotFoundException::new);
+            boardGames.add(boardGame);
+
+            int n = dto.numberOfPlayers();
+            if (n < boardGame.getMinPlayers() || n > boardGame.getMaxPlayers()) {
+                throw new IllegalArgumentException(
+                        "Number of players must be between " +
+                                boardGame.getMinPlayers() +
+                                " and " +
+                                boardGame.getMaxPlayers()
+                );
+            }
         }
 
         User owner = userRepository
@@ -100,7 +107,7 @@ public class GameSessionService {
                 dto.date(),
                 dto.numberOfPlayers(),
                 dto.description(),
-                boardGame,
+                boardGames,
                 owner
         );
 

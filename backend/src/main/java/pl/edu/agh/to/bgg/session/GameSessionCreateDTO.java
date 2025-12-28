@@ -6,10 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record GameSessionCreateDTO(
         @NotNull(message = "boardGameId must not be null")
-        int boardGameId,
+        List<@NotNull(message = "boardGameId cannot be null") Integer> boardGameIds,
 
         @NotBlank(message = "Title must not be blank")
         String title,

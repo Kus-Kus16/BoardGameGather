@@ -13,16 +13,16 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Intege
     @Query("SELECT DISTINCT s FROM GameSession s " +
             "JOIN s.participants p " +
             "JOIN FETCH s.owner " +
-            "JOIN FETCH s.boardGame " +
+            "JOIN FETCH s.boardGames " +
             "WHERE p.username = :username")
     List<GameSession> findAllByParticipantUsername(@Param("username") String username);
 
 
     // TODO check for n+1
-    @Query("SELECT s FROM GameSession s " +
+    @Query("SELECT DISTINCT s FROM GameSession s " +
             "LEFT JOIN FETCH s.participants " +
             "JOIN FETCH s.owner " +
-            "JOIN FETCH s.boardGame " +
+            "JOIN FETCH s.boardGames " +
             "WHERE s.id = :id")
     Optional<GameSession> findByIdWithDetails(@Param("id") int id);
 }

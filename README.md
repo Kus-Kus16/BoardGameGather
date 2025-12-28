@@ -40,7 +40,7 @@ Mariusz Krause
  ```
  Tworzymy plik `.env` na podstawie `.env.example`, z danymi do logowania do bazy danych. Następnie:
  ```
- docker-compose up
+ sudo docker-compose up
  ```
  Uruchamiamy aplikację SpringBoot (np. przez IntelliJ IDEA), dodając plik `.env` jako zmienne środowiskowe, oraz profil `dev` w konfiguracji uruchomieniowej.
 ### Frontend
