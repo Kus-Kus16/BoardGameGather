@@ -15,7 +15,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User registerUser(@RequestBody @Valid UserRequestDTO dto) {
+    public User registerUser(@ModelAttribute @Valid UserRequestDTO dto) {
         try {
             return userService.addUser(dto.username());
         } catch (UsernameAlreadyExistsException e) {
@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public User loginUser(@RequestBody @Valid UserRequestDTO dto) {
+    public User loginUser(@ModelAttribute @Valid UserRequestDTO dto) {
         try {
             return userService.getUser(dto.username());
         } catch (UserNotFoundException e) {

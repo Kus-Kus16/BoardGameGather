@@ -80,7 +80,7 @@ public class GameSessionService {
         if (dto.boardGameIds().isEmpty()) throw new IllegalArgumentException("Session must contain at least one board game");
 
         Set<BoardGame> boardGames = new HashSet<>();
-        
+
         for (Integer boardGameId : dto.boardGameIds()) {
             BoardGame boardGame = boardGameRepository
                     .findById(boardGameId)
@@ -116,12 +116,16 @@ public class GameSessionService {
         return gameSession;
     }
 
-    public void deleteGameSession(int gameSessionId) throws GameSessionNotFoundException {
-        gameSessionRepository
+    public void deleteGameSession(int gameSessionId, String username) throws GameSessionNotFoundException {
+        GameSession session = gameSessionRepository
                 .findById(gameSessionId)
                 .orElseThrow(GameSessionNotFoundException::new);
 
-        gameSessionRepository.deleteById(gameSessionId);
+        if (session.getOwner().getUsername().equals(username)) {
+            gameSessionRepository.deleteById(gameSessionId);
+        } else {
+            throw new SecurityException("Access denied");
+        }
     }
 
     @Transactional

@@ -37,8 +37,8 @@ public class GameSessionController {
         }
     }
 
-    @PatchMapping("{id}/join")
-    public GameSession joinSession(@PathVariable("id") int sessionId, @RequestBody @Valid UserRequestDTO userDTO) {
+    @PatchMapping("{id}/participants")
+    public GameSession addParticipantToSession(@PathVariable("id") int sessionId, @RequestBody @Valid UserRequestDTO userDTO) {
         try {
             return gameSessionService.joinSession(sessionId, userDTO.username());
         } catch (GameSessionNotFoundException | UserNotFoundException e) {
@@ -60,9 +60,10 @@ public class GameSessionController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteSession(@RequestBody @PathVariable("id") int gameSessionId) {
+    public void deleteSession(@PathVariable("id") int gameSessionId,
+                              @RequestParam String username) {
         try {
-            gameSessionService.deleteGameSession(gameSessionId);
+            gameSessionService.deleteGameSession(gameSessionId, username);
         } catch (GameSessionNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
