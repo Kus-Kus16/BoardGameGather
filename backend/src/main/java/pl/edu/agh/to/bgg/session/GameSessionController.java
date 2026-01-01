@@ -4,8 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import pl.edu.agh.to.bgg.boardgame.BoardGameNotFoundException;
-import pl.edu.agh.to.bgg.user.UserNotFoundException;
+import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
+import pl.edu.agh.to.bgg.exception.GameSessionNotFoundException;
+import pl.edu.agh.to.bgg.exception.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,16 +69,12 @@ public class GameSessionController {
         }
     }
 
-    @PatchMapping("{id}/vote")
+    @PostMapping("{id}/voting")
     public void voteInSession(
             @PathVariable("id") int sessionId,
-            @RequestBody @Valid VoteRequestDTO voteDTO)
-    {
-        try {
-            gameSessionService.voteForGame(voteDTO.username(), sessionId, voteDTO.boardGameId(), voteDTO.userWantsGame(), voteDTO.userKnowsGame());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+            @RequestBody @Valid VoteRequestDTO voteDTO) {
+
+        gameSessionService.voteForGame(voteDTO.username(), sessionId, voteDTO.boardGameId(), voteDTO.userWantsGame(), voteDTO.userKnowsGame());
     }
 
     @GetMapping("{id}/voting")

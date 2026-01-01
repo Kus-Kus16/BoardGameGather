@@ -2,6 +2,8 @@ package pl.edu.agh.to.bgg.user;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import pl.edu.agh.to.bgg.exception.UserNotFoundException;
+import pl.edu.agh.to.bgg.exception.UsernameAlreadyExistsException;
 
 @Service
 public class UserService {

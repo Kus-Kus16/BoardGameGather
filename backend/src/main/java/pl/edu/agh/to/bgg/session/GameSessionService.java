@@ -3,10 +3,11 @@ package pl.edu.agh.to.bgg.session;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
-import pl.edu.agh.to.bgg.boardgame.BoardGameNotFoundException;
+import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
 import pl.edu.agh.to.bgg.boardgame.BoardGameRepository;
+import pl.edu.agh.to.bgg.exception.GameSessionNotFoundException;
 import pl.edu.agh.to.bgg.user.User;
-import pl.edu.agh.to.bgg.user.UserNotFoundException;
+import pl.edu.agh.to.bgg.exception.UserNotFoundException;
 import pl.edu.agh.to.bgg.user.UserRepository;
 
 import java.time.LocalDate;
@@ -134,15 +135,15 @@ public class GameSessionService {
 
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         GameSession gameSession = gameSessionRepository
                 .findById(sessionId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(GameSessionNotFoundException::new);
 
         BoardGame boardGame = boardGameRepository
                 .findById(boardGameId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(BoardGameNotFoundException::new);
 
         Voting vote = new Voting(user,gameSession,boardGame,userWantsGame,userKnowsGame);
 

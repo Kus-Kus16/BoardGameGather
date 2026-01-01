@@ -1,10 +1,11 @@
 package pl.edu.agh.to.bgg.user;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.edu.agh.to.bgg.exception.UserNotFoundException;
+import pl.edu.agh.to.bgg.exception.UsernameAlreadyExistsException;
 
 @RestController
 @RequestMapping("users")
@@ -17,19 +18,11 @@ public class UserController {
 
     @PostMapping
     public User registerUser(@RequestHeader("X-User-Login") @NotBlank String username) {
-        try {
-            return userService.addUser(username);
-        } catch (UsernameAlreadyExistsException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
-        }
+        return userService.addUser(username);
     }
 
     @PostMapping("login")
     public User loginUser(@RequestHeader("X-User-Login") @NotBlank String username) {
-        try {
-            return userService.getUser(username);
-        } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return userService.getUser(username);
     }
 }
