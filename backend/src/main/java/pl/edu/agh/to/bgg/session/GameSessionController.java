@@ -2,12 +2,7 @@ package pl.edu.agh.to.bgg.session;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
-import pl.edu.agh.to.bgg.exception.GameSessionNotFoundException;
-import pl.edu.agh.to.bgg.exception.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;

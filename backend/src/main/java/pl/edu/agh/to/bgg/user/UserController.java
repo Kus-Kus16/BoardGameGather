@@ -1,11 +1,10 @@
 package pl.edu.agh.to.bgg.user;
 
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import pl.edu.agh.to.bgg.exception.UserNotFoundException;
-import pl.edu.agh.to.bgg.exception.UsernameAlreadyExistsException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("users")

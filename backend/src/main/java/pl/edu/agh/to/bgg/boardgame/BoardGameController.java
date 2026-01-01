@@ -1,13 +1,9 @@
 package pl.edu.agh.to.bgg.boardgame;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController

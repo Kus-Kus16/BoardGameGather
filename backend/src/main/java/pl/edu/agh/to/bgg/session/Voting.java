@@ -1,6 +1,5 @@
 package pl.edu.agh.to.bgg.session;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
