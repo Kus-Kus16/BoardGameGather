@@ -1,7 +1,8 @@
 package pl.edu.agh.to.bgg.session;
 
-public record VoteRequestDTO(
-        int boardGameId,
+public record VoteChangeDTO(
+        int voteId,
         boolean userWantsGame,
         boolean userKnowsGame
-) {}
+) {
+}

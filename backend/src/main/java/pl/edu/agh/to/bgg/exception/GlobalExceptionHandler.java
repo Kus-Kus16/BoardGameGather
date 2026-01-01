@@ -24,6 +24,22 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalStateException(IllegalStateException e) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Cannot do action not - illegal state");
+        problem.setDetail(e.getMessage());
+        return problem;
+    }
+
+    @ExceptionHandler(AccessDeniedRuntimeException.class)
+    public ProblemDetail handleAccessDeniedRuntimeException(AccessDeniedRuntimeException e) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("No permission to do action");
+        problem.setDetail(e.getMessage());
+        return problem;
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail handleNotFoundException(NotFoundException e) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);

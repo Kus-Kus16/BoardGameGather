@@ -2,6 +2,8 @@ package pl.edu.agh.to.bgg.boardgame;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = BoardGame.TABLE_NAME)
 public class BoardGame {
@@ -113,5 +115,17 @@ public class BoardGame {
 
     public void setMinutesPlaytime(int minutesPlaytime) {
         this.minutesPlaytime = minutesPlaytime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BoardGame boardGame = (BoardGame) o;
+        return id == boardGame.id && Objects.equals(title, boardGame.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title);
     }
 }

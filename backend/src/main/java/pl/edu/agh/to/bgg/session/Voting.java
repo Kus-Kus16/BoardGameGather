@@ -77,4 +77,12 @@ public class Voting {
     public boolean isUserKnowsGame() {
         return userKnowsGame;
     }
+
+    public void setUserWantsGame(boolean userWantsGame) {
+        this.userWantsGame = userWantsGame;
+    }
+
+    public void setUserKnowsGame(boolean userKnowsGame) {
+        this.userKnowsGame = userKnowsGame;
+    }
 }

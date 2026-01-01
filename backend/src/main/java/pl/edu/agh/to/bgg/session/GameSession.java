@@ -156,4 +156,8 @@ public class GameSession {
     public List<Voting> getVoting() {
         return voting;
     }
+
+    public BoardGame getBoardGameSelected() {
+        return boardGameSelected;
+    }
 }
