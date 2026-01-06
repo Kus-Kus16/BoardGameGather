@@ -33,18 +33,24 @@ export default function BoardGameEdit() {
         setError: (msg: string) => void
     ) => {
         try {
-            console.log(formData);
             const data = new FormData();
 
             data.append("description", formData.description);
             data.append("minutesPlaytime", formData.minutesPlaytime.toString());
 
+            // Remove previous
+            data.append("removeImage", formData.existingImageUrl ? "0" : "1")
+            data.append("removeRulebook", formData.existingRulebookUrl ? "0" : "1")
+
+            // Add new
             if (formData.imageFile) {
                 data.append("imageFile", formData.imageFile);
             }
             if (formData.rulebookFile) {
                 data.append("rulebookFile", formData.rulebookFile);
             }
+
+            console.log(formData);
 
             await api.patch<BoardGameTypeUpdate>(`/boardgames/${id}`, data, {
                 headers: { "Content-Type": "multipart/form-data" },

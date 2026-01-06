@@ -13,6 +13,9 @@ public record BoardGameUpdateDTO(
         @Min(value = 1, message = "minutesPlaytime must be at least 1")
         Integer minutesPlaytime,
 
+        boolean removeImage,
+        boolean removeRulebook,
+
         @Nullable
         MultipartFile imageFile,
 

@@ -1,9 +1,14 @@
-export interface BoardGameTypeUpdate {
+interface BoardGameTypeBasic {
     description?: string;
     minutesPlaytime: number;
 }
 
-export interface BoardGameTypeCreate extends BoardGameTypeUpdate {
+export interface BoardGameTypeUpdate extends BoardGameTypeBasic {
+    removeImage: boolean;
+    removeRulebook: boolean;
+}
+
+export interface BoardGameTypeCreate extends BoardGameTypeBasic {
     title: string;
     minPlayers: number;
     maxPlayers: number;

@@ -30,6 +30,7 @@ type VotingSectionProps = {
 
 export default function VotingSection({ session, currentUserId, isOwner, disable }: VotingSectionProps) {
     const [votes, setVotes] = useState<VoteTypeFull[]>(session.votes);
+    const [voteSnapshot, setVoteSnapshot] = useState<VoteTypeFull[]>(votes);
     const [sortBy, setSortBy] = useState<"likes" | "known">("likes");
     const [error, setError] = useState("");
 
@@ -112,9 +113,12 @@ export default function VotingSection({ session, currentUserId, isOwner, disable
     }
 
     const sortedGames = [...session.boardGames].sort((a, b) => {
-        const aVotes = countVotes(getVotesForGame(a.id));
-        const bVotes = countVotes(getVotesForGame(b.id));
-        return sortBy === "likes" ? bVotes.likes - aVotes.likes : bVotes.known - aVotes.known;
+        const aVotes = countVotes(voteSnapshot.filter(v => v.boardGameId === a.id));
+        const bVotes = countVotes(voteSnapshot.filter(v => v.boardGameId === b.id));
+
+        return sortBy === "likes"
+            ? bVotes.likes - aVotes.likes
+            : bVotes.known - aVotes.known;
     });
 
     return (
@@ -125,7 +129,11 @@ export default function VotingSection({ session, currentUserId, isOwner, disable
                 <Box display="flex" flexDirection="column" alignItems="flex-end">
                     <Select
                         value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as "likes" | "known")}
+                        onChange={(e) => {
+                            const newSort = e.target.value as "likes" | "known";
+                            setSortBy(newSort);
+                            setVoteSnapshot(votes);
+                        }}
                     >
                         <MenuItem value="likes">Najbardziej lubiane</MenuItem>
                         <MenuItem value="known">Najbardziej znane</MenuItem>

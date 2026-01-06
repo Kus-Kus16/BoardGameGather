@@ -124,6 +124,10 @@ public class GameSessionService {
                                 boardGame.getMaxPlayers()
                 );
             }
+
+            if (boardGame.isDiscontinued()) {
+                throw new IllegalArgumentException("Board game " + boardGame.getTitle() + " no longer available");
+            }
         }
 
         User owner = userRepository

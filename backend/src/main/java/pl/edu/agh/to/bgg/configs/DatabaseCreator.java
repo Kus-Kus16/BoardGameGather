@@ -36,6 +36,7 @@ public class DatabaseCreator {
                 7,
                 30
         );
+        bg1.setDiscontinued(true);
 
         BoardGame bg2 = new BoardGame(
                 "Robinson Crusoe",

@@ -1,33 +1,26 @@
 package pl.edu.agh.to.bgg.boardgame;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameCreateDTO;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameUpdateDTO;
 import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
 import pl.edu.agh.to.bgg.file.StoredFile;
 import pl.edu.agh.to.bgg.file.StoredFileService;
-import pl.edu.agh.to.bgg.session.GameSessionRepository;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Service
 public class BoardGameService {
 
-    @Value("${app.image-storage-path}")
-    private String imageStoragePath;
-
-    @Value("${app.pdf-storage-path}")
-    private String pdfStoragePath;
-
     private final BoardGameRepository boardGameRepository;
-    private final GameSessionRepository gameSessionRepository;
     private final StoredFileService storedFileService;
 
-    public BoardGameService(BoardGameRepository boardGameRepository, GameSessionRepository gameSessionRepository, StoredFileService storedFileService) {
+    public BoardGameService(BoardGameRepository boardGameRepository, StoredFileService storedFileService) {
         this.boardGameRepository = boardGameRepository;
-        this.gameSessionRepository = gameSessionRepository;
         this.storedFileService = storedFileService;
     }
 
@@ -80,17 +73,8 @@ public class BoardGameService {
             boardGame.setMinutesPlaytime(dto.minutesPlaytime());
         }
 
-        if (dto.imageFile() != null && !dto.imageFile().isEmpty()) {
-            StoredFile image = storedFileService.saveFile(dto.imageFile());
-            storedFileService.deleteFile(boardGame.getImageFile());
-            boardGame.setImageFile(image);
-        }
-
-        if (dto.rulebookFile() != null && !dto.rulebookFile().isEmpty()) {
-            StoredFile pdf = storedFileService.saveFile(dto.rulebookFile());
-            storedFileService.deleteFile(boardGame.getPdfFile());
-            boardGame.setPdfFile(pdf);
-        }
+        updateStoredFile(dto.removeImage(), dto.imageFile(), boardGame::getImageFile, boardGame::setImageFile);
+        updateStoredFile(dto.removeRulebook(), dto.rulebookFile(), boardGame::getPdfFile, boardGame::setPdfFile);
 
         return boardGame;
     }
@@ -109,4 +93,18 @@ public class BoardGameService {
             boardGameRepository.deleteById(boardGameId);
         }
     }
+
+    private void updateStoredFile(boolean remove, MultipartFile newFile, Supplier<StoredFile> getter, Consumer<StoredFile> setter) {
+        if (newFile != null && !newFile.isEmpty()) {
+            storedFileService.deleteFile(getter.get());
+            setter.accept(storedFileService.saveFile(newFile));
+            return;
+        }
+
+        if (remove) {
+            storedFileService.deleteFile(getter.get());
+            setter.accept(null);
+        }
+    }
+
 }
