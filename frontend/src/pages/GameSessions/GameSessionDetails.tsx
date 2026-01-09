@@ -2,19 +2,19 @@ import {useContext, useEffect, useMemo, useState} from "react";
 import { useParams } from "react-router-dom";
 import { Box, Card, CardContent, CardActions, CircularProgress, Alert, Stack } from "@mui/material";
 import api from "../../api/axios";
-import type {GameSessionTypeFull} from "../../types/GameSessionType.ts";
+import type {GameSessionTypeDetails} from "../../types/GameSessionType.ts";
 import GameSessionInfo from "../../components/GameSessionInfo.tsx";
 import BoardGamePreview from "../../components/BoardGamePreview.tsx";
 import GameSessionActionButtons from "../../components/GameSessionActionButtons.tsx";
-import type {BoardGameTypeFull} from "../../types/BoardGameType.ts";
+import type {BoardGameTypeDetails} from "../../types/BoardGameType.ts";
 import {RefreshContext} from "../../components/RefreshContext.tsx";
 import VotingSection from "../../components/GameSessionVoting.tsx";
 import {AuthContext} from "../../auth/AuthContext.tsx";
 
 export default function GameSessionDetails() {
     const { id } = useParams<{ id: string }>();
-    const [session, setSession] = useState<GameSessionTypeFull | null>(null);
-    const [boardGame, setBoardGame] = useState<BoardGameTypeFull>();
+    const [session, setSession] = useState<GameSessionTypeDetails | null>(null);
+    const [boardGame, setBoardGame] = useState<BoardGameTypeDetails>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ export default function GameSessionDetails() {
     const fetchGameSession = async () => {
         try {
             setLoading(true);
-            const { data } = await api.get<GameSessionTypeFull>(`/sessions/${id}`);
+            const { data } = await api.get<GameSessionTypeDetails>(`/sessions/${id}`);
             setSession(data);
             console.log(data)
 

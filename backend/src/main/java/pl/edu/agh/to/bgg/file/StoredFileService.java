@@ -15,19 +15,15 @@ import java.util.UUID;
 
 @Service
 public class StoredFileService {
-    @Value("${app.image-storage-path}")
-    private String imageStoragePath;
-
-    @Value("${app.pdf-storage-path}")
-    private String pdfStoragePath;
-
     private static final long IMAGE_MAX_SIZE = 2 * 1024 * 1024; // 2 MB
     private static final long PDF_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
     private final StoredFileRepository storedFileRepository;
+    private final FileStorageService fileStorageService;
 
-    public StoredFileService(StoredFileRepository storedFileRepository) {
+    public StoredFileService(StoredFileRepository storedFileRepository, FileStorageService fileStorageService) {
         this.storedFileRepository = storedFileRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Transactional
@@ -37,38 +33,31 @@ public class StoredFileService {
             throw new IllegalArgumentException("StoredFile content type is null");
         }
 
-        String storageDirPath;
-        if (contentType.startsWith("image/")) {
-            storageDirPath = imageStoragePath;
-            validateImage(file);
-        } else if (contentType.startsWith("application/pdf")) {
-            storageDirPath = pdfStoragePath;
-            validatePdfFile(file);
-        } else {
-            throw new IllegalArgumentException("StoredFile should be image or pdf");
-        }
+        StoredFileType fileType = switch (contentType) {
+            case String ct when ct.startsWith("image/") -> {
+                validateImage(file);
+                yield StoredFileType.IMAGE;
+            }
+            case String ct when ct.startsWith("application/pdf") -> {
+                validatePdfFile(file);
+                yield StoredFileType.PDF;
+            }
+            default -> throw new IllegalArgumentException(
+                "StoredFile should be image or pdf"
+            );
+        };
 
-        try {
-            UUID id = UUID.randomUUID();
-            StoredFile storedFile = new StoredFile(
-                    id,
-                    file.getOriginalFilename(),
-                    contentType,
-                    file.getSize());
+        UUID id = UUID.randomUUID();
+        StoredFile storedFile = new StoredFile(
+                id,
+                file.getOriginalFilename(),
+                contentType,
+                file.getSize());
 
-            Path projectRoot = Path.of("").toAbsolutePath();
-            Path targetDir = projectRoot.resolve(storageDirPath);
-            Files.createDirectories(targetDir);
+        Path filepath = fileStorageService.save(file, fileType, id.toString());
+        storedFile.setStoragePath(filepath.toString());
 
-            String fileName = id.toString();
-            Path filePath = targetDir.resolve(fileName);
-            file.transferTo(filePath.toFile());
-
-            storedFile.setStoragePath(filePath.toString());
-            return storedFileRepository.save(storedFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save file", e);
-        }
+        return storedFileRepository.save(storedFile);
     }
 
     public StoredFile getFile(UUID id) {
@@ -93,13 +82,7 @@ public class StoredFileService {
             return;
         }
 
-        Path path = Path.of(storedFile.getStoragePath());
-        try {
-            Files.deleteIfExists(path);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to delete file" + path, e);
-        }
-
+        fileStorageService.deleteIfExists(storedFile);
         storedFileRepository.delete(storedFile);
     }
 

@@ -15,6 +15,7 @@ import pl.edu.agh.to.bgg.vote.VoteRepository;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -96,7 +97,7 @@ public class GameSessionService {
         gameSession.getParticipants().remove(user);
 
         gameSession.getVotes()
-                .removeIf(vote -> vote.getSessionParticipant().equals(user));
+                .removeIf(vote -> Objects.equals(vote.getSessionParticipant(), user));
     }
 
 

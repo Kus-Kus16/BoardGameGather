@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, CircularProgress, Alert, Stack, Tooltip } from "@mui/material";
-import type {BoardGameTypeFull} from "../../types/BoardGameType.ts";
+import type {BoardGameTypeDetails} from "../../types/BoardGameType.ts";
 import api, {baseURL} from "../../api/axios";
 import {Link as RouterLink} from "react-router";
 import {AuthContext} from "../../auth/AuthContext.tsx";
@@ -13,7 +13,7 @@ export default function BoardGameDetails() {
     const navigate = useNavigate();
     const auth = useContext(AuthContext);
 
-    const [boardGame, setBoardGame] = useState<BoardGameTypeFull | null>(null);
+    const [boardGame, setBoardGame] = useState<BoardGameTypeDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
@@ -34,7 +34,7 @@ export default function BoardGameDetails() {
     useEffect(() => {
         const fetchBoardGame = async () => {
             try {
-                const { data } = await api.get<BoardGameTypeFull>(`/boardgames/${id}`);
+                const { data } = await api.get<BoardGameTypeDetails>(`/boardgames/${id}`);
                 setBoardGame(data);
             } catch {
                 setError("Nie udało się pobrać danych gry.");

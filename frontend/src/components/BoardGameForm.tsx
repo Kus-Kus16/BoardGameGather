@@ -14,7 +14,7 @@ import {
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImageNotSupported, PictureAsPdf, Photo } from '@mui/icons-material';
-import type { BoardGameTypeFull } from "../types/BoardGameType.ts";
+import type { BoardGameTypeDetails } from "../types/BoardGameType.ts";
 import {baseURL} from "../api/axios.tsx";
 
 export interface BoardGameFormData {
@@ -32,7 +32,7 @@ export interface BoardGameFormData {
 }
 
 export interface BoardGameFormProps {
-    initialData?: BoardGameTypeFull;
+    initialData?: BoardGameTypeDetails;
     onSubmit: (
         formData: BoardGameFormData,
         setError: (msg: string) => void

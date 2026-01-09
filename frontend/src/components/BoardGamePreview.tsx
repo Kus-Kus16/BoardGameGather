@@ -1,5 +1,5 @@
 import { Card, CardContent, CardActions, Typography, Button, CardActionArea, CardMedia, Tooltip, Box } from "@mui/material";
-import type { BoardGameTypeFull } from "../types/BoardGameType.ts";
+import type { BoardGameTypeDetails } from "../types/BoardGameType.ts";
 import { Link as RouterLink } from "react-router-dom";
 import {useContext} from "react";
 import {AuthContext} from "../auth/AuthContext.tsx";
@@ -7,7 +7,7 @@ import {ImageNotSupported} from "@mui/icons-material";
 import {baseURL} from "../api/axios.tsx";
 
 interface BoardGamePreviewProps {
-    boardGame: BoardGameTypeFull;
+    boardGame: BoardGameTypeDetails;
     showActions: boolean;
 }
 

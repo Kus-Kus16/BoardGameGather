@@ -2,14 +2,14 @@ package pl.edu.agh.to.bgg.vote.dto;
 
 import pl.edu.agh.to.bgg.vote.Vote;
 
-public record VoteFullDTO(
+public record VoteDetailsDTO(
         int boardGameId,
         boolean likes,
         boolean knows,
         int userId
 ) {
-    public static VoteFullDTO from(Vote vote) {
-        return new VoteFullDTO(
+    public static VoteDetailsDTO from(Vote vote) {
+        return new VoteDetailsDTO(
                 vote.getBoardGame().getId(),
                 vote.isLikes(),
                 vote.isKnows(),

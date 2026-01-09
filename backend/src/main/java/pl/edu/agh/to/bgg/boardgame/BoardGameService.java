@@ -50,8 +50,8 @@ public class BoardGameService {
         }
 
         if (dto.rulebookFile() != null && !dto.rulebookFile().isEmpty()) {
-            StoredFile pdf = storedFileService.saveFile(dto.rulebookFile());
-            boardGame.setPdfFile(pdf);
+            StoredFile rulebook = storedFileService.saveFile(dto.rulebookFile());
+            boardGame.setRulebookFile(rulebook);
         }
 
         return boardGameRepository.save(boardGame);
@@ -74,7 +74,7 @@ public class BoardGameService {
         }
 
         updateStoredFile(dto.removeImage(), dto.imageFile(), boardGame::getImageFile, boardGame::setImageFile);
-        updateStoredFile(dto.removeRulebook(), dto.rulebookFile(), boardGame::getPdfFile, boardGame::setPdfFile);
+        updateStoredFile(dto.removeRulebook(), dto.rulebookFile(), boardGame::getRulebookFile, boardGame::setRulebookFile);
 
         return boardGame;
     }
@@ -89,7 +89,7 @@ public class BoardGameService {
             boardGame.setDiscontinued(true);
         } else {
             storedFileService.deleteFile(boardGame.getImageFile());
-            storedFileService.deleteFile(boardGame.getPdfFile());
+            storedFileService.deleteFile(boardGame.getRulebookFile());
             boardGameRepository.deleteById(boardGameId);
         }
     }

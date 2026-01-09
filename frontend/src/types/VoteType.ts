@@ -4,6 +4,6 @@ export interface VoteTypeCreate {
     knows: boolean;
 }
 
-export interface VoteTypeFull extends VoteTypeCreate {
+export interface VoteTypeDetails extends VoteTypeCreate {
     userId: number;
 }

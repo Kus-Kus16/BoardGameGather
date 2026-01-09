@@ -55,4 +55,12 @@ public class GlobalExceptionHandler {
         problem.setDetail(e.getMessage());
         return problem;
     }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ProblemDetail handleFileStorageException(FileStorageException e) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("File storage error");
+        problem.setDetail(e.getMessage());
+        return problem;
+    }
 }

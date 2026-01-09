@@ -1,7 +1,7 @@
 package pl.edu.agh.to.bgg.boardgame.dto;
 
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
-public record BoardGameFullDTO(
+public record BoardGameDetailsDTO(
         int id,
         String title,
         String description,
@@ -12,8 +12,8 @@ public record BoardGameFullDTO(
         String imageUrl,
         String rulebookUrl
 ) {
-    public static BoardGameFullDTO from(BoardGame game) {
-        return new BoardGameFullDTO(
+    public static BoardGameDetailsDTO from(BoardGame game) {
+        return new BoardGameDetailsDTO(
                 game.getId(),
                 game.getTitle(),
                 game.getDescription(),
@@ -24,8 +24,8 @@ public record BoardGameFullDTO(
                 game.getImageFile() != null
                         ? "/files/" + game.getImageFile().getId()
                         : null,
-                game.getPdfFile() != null
-                        ? "/files/" + game.getPdfFile().getId()
+                game.getRulebookFile() != null
+                        ? "/files/" + game.getRulebookFile().getId()
                         : null
         );
     }

@@ -14,7 +14,7 @@ export interface BoardGameTypeCreate extends BoardGameTypeBasic {
     maxPlayers: number;
 }
 
-export interface BoardGameTypeFull extends BoardGameTypeCreate {
+export interface BoardGameTypeDetails extends BoardGameTypeCreate {
     id: number;
     discontinued: boolean;
     imageUrl?: string;

@@ -12,7 +12,7 @@ import {
     Divider
 } from "@mui/material";
 import type { GameSessionTypeCreate } from "../types/GameSessionType.ts";
-import type { BoardGameTypeFull } from "../types/BoardGameType.ts";
+import type { BoardGameTypeDetails } from "../types/BoardGameType.ts";
 import { useNavigate } from "react-router-dom";
 import BoardGameSelector from "./BoardGameSelector";
 
@@ -43,9 +43,9 @@ export default function GameSessionForm({ initialData, initialBoardGameId, onSub
         games?: string;
     }>({});
 
-    const [selectedBoardGames, setSelectedBoardGames] = useState<BoardGameTypeFull[]>([]);
-    const [minPlayersGame, setMinPlayersGame] = useState<BoardGameTypeFull>();
-    const [maxPlayersGame, setMaxPlayersGame] = useState<BoardGameTypeFull>();
+    const [selectedBoardGames, setSelectedBoardGames] = useState<BoardGameTypeDetails[]>([]);
+    const [minPlayersGame, setMinPlayersGame] = useState<BoardGameTypeDetails>();
+    const [maxPlayersGame, setMaxPlayersGame] = useState<BoardGameTypeDetails>();
 
     const navigate = useNavigate();
 

@@ -2,8 +2,6 @@ package pl.edu.agh.to.bgg.boardgame;
 
 import jakarta.persistence.*;
 import pl.edu.agh.to.bgg.file.StoredFile;
-import pl.edu.agh.to.bgg.session.GameSession;
-import pl.edu.agh.to.bgg.user.User;
 
 import java.util.Objects;
 
@@ -20,7 +18,7 @@ public class BoardGame {
         public static final String MINUTES_PLAYTIME = "minutes_playtime";
         public static final String DISCONTINUED = "discontinued";
         public static final String IMAGE_FILE_ID = "image_file_id";
-        public static final String PDF_FILE_ID = "pdf_file_id";
+        public static final String RULEBOOK_FILE_ID = "rulebook_file_id";
     }
 
     @Id
@@ -51,8 +49,8 @@ public class BoardGame {
     private StoredFile imageFile;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = Columns.PDF_FILE_ID)
-    private StoredFile pdfFile;
+    @JoinColumn(name = Columns.RULEBOOK_FILE_ID)
+    private StoredFile rulebookFile;
 
     public BoardGame(String title, String description, int minPlayers, int maxPlayers, int minutesPlaytime) {
         this.title = title;
@@ -103,12 +101,12 @@ public class BoardGame {
         this.imageFile = imageFile;
     }
 
-    public StoredFile getPdfFile() {
-        return pdfFile;
+    public StoredFile getRulebookFile() {
+        return rulebookFile;
     }
 
-    public void setPdfFile(StoredFile pdfFile) {
-        this.pdfFile = pdfFile;
+    public void setRulebookFile(StoredFile rulebookFile) {
+        this.rulebookFile = rulebookFile;
     }
 
     public void setTitle(String title) {

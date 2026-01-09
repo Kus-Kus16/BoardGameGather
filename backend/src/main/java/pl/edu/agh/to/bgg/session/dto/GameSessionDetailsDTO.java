@@ -3,14 +3,13 @@ package pl.edu.agh.to.bgg.session.dto;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.session.GameSession;
 import pl.edu.agh.to.bgg.user.User;
-import pl.edu.agh.to.bgg.vote.Vote;
-import pl.edu.agh.to.bgg.vote.dto.VoteFullDTO;
+import pl.edu.agh.to.bgg.vote.dto.VoteDetailsDTO;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public record GameSessionFullDTO(
+public record GameSessionDetailsDTO(
         int id,
         String title,
         LocalDate date,
@@ -20,10 +19,10 @@ public record GameSessionFullDTO(
         Integer selectedBoardGameId,
         List<User> participants,
         List<BoardGame> boardGames,
-        List<VoteFullDTO> votes
+        List<VoteDetailsDTO> votes
 ) {
-    public static GameSessionFullDTO from(GameSession session) {
-        return new GameSessionFullDTO(
+    public static GameSessionDetailsDTO from(GameSession session) {
+        return new GameSessionDetailsDTO(
                 session.getId(),
                 session.getTitle(),
                 session.getDate(),
@@ -35,7 +34,13 @@ public record GameSessionFullDTO(
                         : null,
                 new ArrayList<>(session.getParticipants()),
                 new ArrayList<>(session.getBoardGames()),
-                session.getVotes().stream().map(VoteFullDTO::from).toList()
+                getVotes(session)
         );
+    }
+
+    private static List<VoteDetailsDTO> getVotes(GameSession session) {
+        return session.getVotes().stream()
+                .map(VoteDetailsDTO::from)
+                .toList();
     }
 }

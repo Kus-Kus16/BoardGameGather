@@ -3,7 +3,7 @@ package pl.edu.agh.to.bgg.boardgame;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameCreateDTO;
-import pl.edu.agh.to.bgg.boardgame.dto.BoardGameFullDTO;
+import pl.edu.agh.to.bgg.boardgame.dto.BoardGameDetailsDTO;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameUpdateDTO;
 
 import java.util.List;
@@ -18,40 +18,33 @@ public class BoardGameController {
     }
 
     @GetMapping
-    public List<BoardGameFullDTO> getBoardGames() {
+    public List<BoardGameDetailsDTO> getBoardGames() {
         return boardGameService.getAvailableBoardGames()
                 .stream()
-                .map(BoardGameFullDTO::from)
+                .map(BoardGameDetailsDTO::from)
                 .toList();
     }
 
     @GetMapping("{id}")
-    public BoardGameFullDTO getBoardGame(@PathVariable("id") int boardGameId) {
+    public BoardGameDetailsDTO getBoardGame(@PathVariable("id") int boardGameId) {
         BoardGame boardGame = boardGameService.getBoardGame(boardGameId);
-        return BoardGameFullDTO.from(boardGame);
+        return BoardGameDetailsDTO.from(boardGame);
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public BoardGameFullDTO createBoardGame(@ModelAttribute @Valid BoardGameCreateDTO dto) {
-        System.out.println(dto);
+    public BoardGameDetailsDTO createBoardGame(@ModelAttribute @Valid BoardGameCreateDTO dto) {
         if (dto.minPlayers() > dto.maxPlayers()) {
             throw new IllegalArgumentException("maxPlayers must be greater than or equal to minPlayers");
         }
 
-        try {
         BoardGame boardGame = boardGameService.addBoardGame(dto);
-        return BoardGameFullDTO.from(boardGame);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return BoardGameDetailsDTO.from(boardGame);
     }
 
     @PatchMapping(value = "{id}", consumes = "multipart/form-data")
-    public BoardGameFullDTO updateBoardGame(@PathVariable int id, @ModelAttribute @Valid BoardGameUpdateDTO dto) {
+    public BoardGameDetailsDTO updateBoardGame(@PathVariable int id, @ModelAttribute @Valid BoardGameUpdateDTO dto) {
         BoardGame boardGame = boardGameService.updateBoardGame(id, dto);
-        return BoardGameFullDTO.from(boardGame);
+        return BoardGameDetailsDTO.from(boardGame);
     }
 
     @DeleteMapping("{id}")

@@ -1,5 +1,5 @@
-import type { VoteTypeFull } from "../types/VoteType";
-import type { GameSessionTypeFull } from "../types/GameSessionType";
+import type { VoteTypeDetails } from "../types/VoteType";
+import type { GameSessionTypeDetails } from "../types/GameSessionType";
 import {useContext, useState} from "react";
 import {
     Button,
@@ -22,15 +22,15 @@ import {Link as RouterLink} from "react-router";
 import {RefreshContext} from "./RefreshContext.tsx";
 
 type VotingSectionProps = {
-    session: GameSessionTypeFull;
+    session: GameSessionTypeDetails;
     currentUserId: number | undefined;
     isOwner: boolean;
     disable: boolean;
 };
 
 export default function VotingSection({ session, currentUserId, isOwner, disable }: VotingSectionProps) {
-    const [votes, setVotes] = useState<VoteTypeFull[]>(session.votes);
-    const [voteSnapshot, setVoteSnapshot] = useState<VoteTypeFull[]>(votes);
+    const [votes, setVotes] = useState<VoteTypeDetails[]>(session.votes);
+    const [voteSnapshot, setVoteSnapshot] = useState<VoteTypeDetails[]>(votes);
     const [sortBy, setSortBy] = useState<"likes" | "known">("likes");
     const [error, setError] = useState("");
 
@@ -39,7 +39,7 @@ export default function VotingSection({ session, currentUserId, isOwner, disable
     const getVotesForGame = (gameId: number) =>
         votes.filter((v) => v.boardGameId === gameId);
 
-    const countVotes = (votes: VoteTypeFull[]) => ({
+    const countVotes = (votes: VoteTypeDetails[]) => ({
         likes: votes.filter((v) => v.likes).length,
         known: votes.filter((v) => v.knows).length,
     });

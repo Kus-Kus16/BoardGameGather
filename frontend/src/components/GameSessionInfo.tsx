@@ -1,8 +1,8 @@
 import { Chip, Divider, Stack, Typography } from "@mui/material";
-import type {GameSessionTypeFull} from "../types/GameSessionType.ts";
+import type {GameSessionTypeDetails} from "../types/GameSessionType.ts";
 import { StarBorder } from '@mui/icons-material';
 
-export default function GameSessionInfo({ session }: { session: GameSessionTypeFull }) {
+export default function GameSessionInfo({ session }: { session: GameSessionTypeDetails }) {
     const isPastSession = new Date(session.date) < new Date();
     const isFull = session.participants.length >= session.numberOfPlayers;
 

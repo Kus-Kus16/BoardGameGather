@@ -1,6 +1,6 @@
 package pl.edu.agh.to.bgg.session.dto;
 
-import pl.edu.agh.to.bgg.boardgame.dto.BoardGameFullDTO;
+import pl.edu.agh.to.bgg.boardgame.dto.BoardGameDetailsDTO;
 import pl.edu.agh.to.bgg.session.GameSession;
 import pl.edu.agh.to.bgg.user.User;
 
@@ -15,7 +15,7 @@ public record GameSessionPreviewDTO(
         int numberOfPlayers,
         String description,
         int ownerId,
-        BoardGameFullDTO selectedBoardGame,
+        BoardGameDetailsDTO selectedBoardGame,
         List<User> participants
 ) {
     public static GameSessionPreviewDTO from(GameSession session) {
@@ -27,7 +27,7 @@ public record GameSessionPreviewDTO(
                 session.getDescription(),
                 session.getOwner().getId(),
                 session.getSelectedBoardGame() != null
-                        ? BoardGameFullDTO.from(session.getSelectedBoardGame())
+                        ? BoardGameDetailsDTO.from(session.getSelectedBoardGame())
                         : null,
                 new ArrayList<>(session.getParticipants())
         );

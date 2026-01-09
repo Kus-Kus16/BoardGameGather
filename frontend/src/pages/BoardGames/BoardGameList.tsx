@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Grid, Box, Typography, Divider, CircularProgress, Alert } from "@mui/material";
 import BoardGamePreview from "../../components/BoardGamePreview.tsx";
-import type { BoardGameTypeFull } from "../../types/BoardGameType.ts";
+import type { BoardGameTypeDetails } from "../../types/BoardGameType.ts";
 import {useNavigate} from "react-router-dom";
 import api from "../../api/axios"
 import AddElementCard from "../../components/AddElementCard.tsx";
 
 export default function BoardGameList() {
-    const [boardGames, setBoardGames] = useState<BoardGameTypeFull[]>([]);
+    const [boardGames, setBoardGames] = useState<BoardGameTypeDetails[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function BoardGameList() {
     useEffect(() => {
         const fetchBoardGames = async () => {
             try {
-                const { data } = await api.get<BoardGameTypeFull[]>('/boardgames');
+                const { data } = await api.get<BoardGameTypeDetails[]>('/boardgames');
                 setBoardGames(data);
             } catch {
                 setError("Nie udało się pobrać listy gier.");

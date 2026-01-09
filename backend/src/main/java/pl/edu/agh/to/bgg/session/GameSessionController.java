@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.to.bgg.session.dto.GameSessionCreateDTO;
-import pl.edu.agh.to.bgg.session.dto.GameSessionFullDTO;
+import pl.edu.agh.to.bgg.session.dto.GameSessionDetailsDTO;
 import pl.edu.agh.to.bgg.session.dto.GameSessionPreviewDTO;
 import pl.edu.agh.to.bgg.vote.dto.VoteCreateDTO;
 
@@ -35,15 +35,15 @@ public class GameSessionController {
     }
 
     @GetMapping("{id}")
-    public GameSessionFullDTO getSession(@PathVariable("id") int sessionId) {
+    public GameSessionDetailsDTO getSession(@PathVariable("id") int sessionId) {
         GameSession session = gameSessionService.getSession(sessionId);
-        return GameSessionFullDTO.from(session);
+        return GameSessionDetailsDTO.from(session);
     }
 
     @PatchMapping("{id}/participants")
-    public GameSessionFullDTO addParticipantToSession(@PathVariable("id") int sessionId, @RequestHeader("X-User-Login") String username) {
+    public GameSessionDetailsDTO addParticipantToSession(@PathVariable("id") int sessionId, @RequestHeader("X-User-Login") String username) {
         GameSession session = gameSessionService.joinSession(sessionId, username);
-        return GameSessionFullDTO.from(session);
+        return GameSessionDetailsDTO.from(session);
     }
 
     @DeleteMapping("{id}/participants")
@@ -52,9 +52,9 @@ public class GameSessionController {
     }
 
     @PostMapping
-    public GameSessionFullDTO createSession(@RequestBody @Valid GameSessionCreateDTO dto, @RequestHeader("X-User-Login") String username) {
+    public GameSessionDetailsDTO createSession(@RequestBody @Valid GameSessionCreateDTO dto, @RequestHeader("X-User-Login") String username) {
         GameSession session = gameSessionService.addSession(dto, username);
-        return GameSessionFullDTO.from(session);
+        return GameSessionDetailsDTO.from(session);
     }
 
     @DeleteMapping("{id}")

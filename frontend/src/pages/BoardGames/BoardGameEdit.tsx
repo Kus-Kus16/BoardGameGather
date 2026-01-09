@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import BoardGameForm, {type BoardGameFormData} from "../../components/BoardGameForm.tsx";
 import {useEffect, useState} from "react";
 import {Alert, Box, CircularProgress} from "@mui/material";
-import type {BoardGameTypeFull, BoardGameTypeUpdate} from "../../types/BoardGameType.ts";
+import type {BoardGameTypeDetails, BoardGameTypeUpdate} from "../../types/BoardGameType.ts";
 
 export default function BoardGameEdit() {
     const { id } = useParams<{ id: string }>();
@@ -11,12 +11,12 @@ export default function BoardGameEdit() {
 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
-    const [initialData, setInitialData] = useState<BoardGameTypeFull | undefined>(undefined);
+    const [initialData, setInitialData] = useState<BoardGameTypeDetails | undefined>(undefined);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get<BoardGameTypeFull>(`/boardgames/${id}`);
+                const response = await api.get<BoardGameTypeDetails>(`/boardgames/${id}`);
                 setInitialData(response.data);
             } catch {
                 setError("Nie udało się pobrać danych gry.");
