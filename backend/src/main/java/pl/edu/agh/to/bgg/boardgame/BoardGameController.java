@@ -53,7 +53,7 @@ public class BoardGameController {
 
     @DeleteMapping("{id}")
     public void deleteBoardGame(@PathVariable("id") int boardGameId) {
-        boardGameService.deleteBoardGame(boardGameId);
+        boardGameService.tryDeleteBoardGame(boardGameId);
     }
 
     @GetMapping("external")

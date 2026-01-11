@@ -2,20 +2,19 @@ package pl.edu.agh.to.bgg.boardgame.external.geek;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import pl.edu.agh.to.bgg.boardgame.BoardGame;
-import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameEntry;
-import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameProvider;
 import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameDetailsDTO;
 import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameEntryDTO;
-import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
 // TODO remove after real api implemented
 @Service
 @Primary
-public class DummyApiClient implements ExternalBoardGameProvider {
+public class DummyApiClient implements ApiClient {
 
     private List<GeekBoardGameEntryDTO> dummyApiSearch() {
         return List.of(
@@ -57,17 +56,23 @@ public class DummyApiClient implements ExternalBoardGameProvider {
     }
 
     @Override
-    public List<ExternalBoardGameEntry> searchFor(String query) {
-        return dummyApiSearch().stream()
-                .map(GeekBoardGameEntryDTO::toExternalBoardGameEntry)
-                .toList();
+    public List<GeekBoardGameEntryDTO> searchFor(String query) {
+        return dummyApiSearch();
     }
 
     @Override
-    public BoardGame getById(int id) {
-        return dummyApiGet(id)
-                .map(GeekBoardGameDetailsDTO::toBoardGame)
-                .orElseThrow(BoardGameNotFoundException::new);
+    public Optional<GeekBoardGameDetailsDTO> getById(int id) {
+        return dummyApiGet(id);
+    }
+
+    @Override
+    public byte[] getImage(String url) {
+        url = "https://cf.geekdo-images.com/3EmD1SEI5fVpR4rbdkU0AA__original/img/M6qiL7ZNU_mjgZXHZjOrVxNamfU=/0x0/filters:format(jpeg)/pic882119.jpg";
+        try (InputStream is = new URL(url).openStream()) {
+            return is.readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

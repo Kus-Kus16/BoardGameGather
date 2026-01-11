@@ -1,13 +1,13 @@
 import {useContext, useEffect, useState} from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, CircularProgress, Alert, Stack, Tooltip } from "@mui/material";
+import { Box, Typography, Card, CardContent, CardActions, Button, CircularProgress, Alert, Stack, Tooltip } from "@mui/material";
 import type {BoardGameTypeDetails} from "../../types/BoardGameType.ts";
 import api, {baseURL} from "../../api/axios";
 import {Link as RouterLink} from "react-router";
 import {AuthContext} from "../../auth/AuthContext.tsx";
-import {ImageNotSupported} from "@mui/icons-material";
 import ConfirmDialog from "../../components/ConfirmDialog.tsx";
 import WideLayoutBox from "../../layout/WideLayoutBox.tsx";
+import ImageMedia from "../../components/ImageMedia.tsx";
 
 export default function BoardGameDetails() {
     const { id } = useParams<{ id: string }>();
@@ -63,31 +63,9 @@ export default function BoardGameDetails() {
                 <>
                 <Card>
                     <Stack direction="row" spacing={2}>
-                        {boardGame.imageUrl ? (
-                            <CardMedia
-                                component="img"
-                                image={`${baseURL}${boardGame.imageUrl}`}
-                                alt={boardGame.title}
-                                sx={{
-                                    width: "75%",
-                                    maxHeight: "500px",
-                                    aspectRatio: "1 / 1"
-                                }}
-                            />
-                        ) : (
-                            <Box
-                                sx={{
-                                    width: "75%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    bgcolor: "grey.100",
-                                    aspectRatio: "1 / 1"
-                                }}
-                            >
-                                <ImageNotSupported sx={{ fontSize: 80, color: "grey.400" }} />
-                            </Box>
-                        )}
+                        <ImageMedia displayImage={!!boardGame.imageUrl} imageUrl={`${baseURL}${boardGame.imageUrl}`}
+                                    altText={boardGame.title} width={"75%"} maxHeight={"500px"}
+                        />
 
                         <Box width="100%" display="flex" flexDirection="column" justifyContent="space-evenly" pl={2}>
                             <CardContent sx={{p: 3}}>

@@ -10,5 +10,5 @@ public interface ExternalBoardGameProvider {
 
     List<ExternalBoardGameEntry> searchFor(String query);
 
-    BoardGame getById(int id);
+    BoardGame getById(int externalId);
 }

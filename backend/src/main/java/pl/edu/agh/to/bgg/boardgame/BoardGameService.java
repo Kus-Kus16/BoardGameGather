@@ -84,7 +84,7 @@ public class BoardGameService {
     }
 
     @Transactional
-    public void deleteBoardGame(int boardGameId) {
+    public void tryDeleteBoardGame(int boardGameId) {
         BoardGame boardGame = boardGameRepository
                 .findById(boardGameId)
                 .orElseThrow(BoardGameNotFoundException::new);

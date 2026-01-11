@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.BoardGameRepository;
+import pl.edu.agh.to.bgg.boardgame.BoardGameService;
 import pl.edu.agh.to.bgg.exception.*;
 import pl.edu.agh.to.bgg.session.dto.GameSessionCreateDTO;
 import pl.edu.agh.to.bgg.user.User;
@@ -24,12 +25,14 @@ public class GameSessionService {
     private final UserRepository userRepository;
     private final BoardGameRepository boardGameRepository;
     private final VoteRepository voteRepository;
+    private final BoardGameService boardGameService;
 
-    public GameSessionService(GameSessionRepository gameSessionRepository, UserRepository userRepository, BoardGameRepository boardGameRepository, VoteRepository voteRepository) {
+    public GameSessionService(GameSessionRepository gameSessionRepository, UserRepository userRepository, BoardGameRepository boardGameRepository, VoteRepository voteRepository, BoardGameService boardGameService) {
         this.gameSessionRepository = gameSessionRepository;
         this.userRepository = userRepository;
         this.boardGameRepository = boardGameRepository;
         this.voteRepository = voteRepository;
+        this.boardGameService = boardGameService;
     }
 
     public List<GameSession> getSessions() {
@@ -161,6 +164,11 @@ public class GameSessionService {
 
         if (session.getOwner().getUsername().equals(username)) {
             gameSessionRepository.deleteById(gameSessionId);
+
+            BoardGame selectedBoardGame = session.getSelectedBoardGame();
+            if (selectedBoardGame != null && selectedBoardGame.isDiscontinued()) {
+                boardGameService.tryDeleteBoardGame(selectedBoardGame.getId());
+            }
         } else {
             throw new SecurityException("Access denied");
         }

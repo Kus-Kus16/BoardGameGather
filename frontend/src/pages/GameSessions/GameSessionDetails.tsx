@@ -44,7 +44,6 @@ export default function GameSessionDetails() {
             setLoading(true);
             const { data } = await api.get<GameSessionTypeDetails>(`/sessions/${id}`);
             setSession(data);
-            console.log(data)
 
             const selected =
                 data.boardGames.find((game) => game.id === data.selectedBoardGameId)

@@ -5,17 +5,14 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
-import pl.edu.agh.to.bgg.boardgame.BoardGame;
-import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameEntry;
-import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameProvider;
 import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameDetailsDTO;
 import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameEntryDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class GeekApiClient implements ExternalBoardGameProvider {
+public class GeekApiClient implements ApiClient {
     private static class GeekBoardGameEntryDTOList {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "boardgame") // todo ??
@@ -34,7 +31,7 @@ public class GeekApiClient implements ExternalBoardGameProvider {
     private final RestClient restClient = RestClient.create();
 
     @Override
-    public List<ExternalBoardGameEntry> searchFor(String query) {
+    public List<GeekBoardGameEntryDTO> searchFor(String query) {
         GeekBoardGameEntryDTOList response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(URL)
@@ -46,14 +43,11 @@ public class GeekApiClient implements ExternalBoardGameProvider {
                 .retrieve()
                 .body(GeekBoardGameEntryDTOList.class);
 
-        return response.getBoardgames()
-                .stream()
-                .map(GeekBoardGameEntryDTO::toExternalBoardGameEntry)
-                .toList();
+        return response.getBoardgames();
     }
 
     @Override
-    public BoardGame getById(int id) {
+    public Optional<GeekBoardGameDetailsDTO> getById(int id) {
         GeekBoardGameDetailsDTO response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(URL)
@@ -65,8 +59,18 @@ public class GeekApiClient implements ExternalBoardGameProvider {
                 .retrieve()
                 .body(GeekBoardGameDetailsDTO.class);
 
-        return response.toBoardGame();
+        return Optional.ofNullable(response);
     }
+
+    @Override
+    public byte[] getImage(String imageUrl) {
+        return restClient.get()
+                .uri(imageUrl)
+                .accept(MediaType.APPLICATION_OCTET_STREAM)
+                .retrieve()
+                .body(byte[].class);
+    }
+
 }
 
 
