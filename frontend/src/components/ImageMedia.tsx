@@ -21,7 +21,9 @@ export default function ImageMedia({ displayImage, imageUrl, altText, height, ma
                 alt={altText}
                 sx={{
                     aspectRatio: "1 / 1",
-                    maxHeight: {maxHeight}
+                    maxHeight: {maxHeight},
+                    objectFit: "contain",
+                    backgroundColor: "transparent"
                 }}
             />
         )

@@ -24,6 +24,6 @@ export interface BoardGameTypeDetails extends BoardGameTypeCreate {
 export interface ExternalBoardGameTypeEntry {
     id: number;
     name: string;
-    releaseYear: number;
+    releaseYear?: number;
 }
 

@@ -117,7 +117,7 @@ export default function BoardGameDetails() {
                                                 <Button
                                                     size="medium"
                                                     color="error"
-                                                    onClick={handleDelete}
+                                                    onClick={() => setOpenDeleteDialog(true)}
                                                 >
                                                     Usuń
                                                 </Button>

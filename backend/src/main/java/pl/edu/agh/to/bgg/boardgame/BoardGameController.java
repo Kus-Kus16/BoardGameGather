@@ -63,7 +63,13 @@ public class BoardGameController {
 
     @PostMapping("external/{id}")
     public BoardGameDetailsDTO importExternalBoardGame(@PathVariable int id) {
-        BoardGame boardGame = externalBoardGameService.importBoardGame(id);
-        return BoardGameDetailsDTO.from(boardGame);
+        try {
+            BoardGame boardGame = externalBoardGameService.importBoardGame(id);
+            return BoardGameDetailsDTO.from(boardGame);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

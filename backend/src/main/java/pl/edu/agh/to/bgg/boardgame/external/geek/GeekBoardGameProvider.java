@@ -3,55 +3,52 @@ package pl.edu.agh.to.bgg.boardgame.external.geek;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameEntry;
+import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameImagePair;
 import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameProvider;
-import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameDetailsDTO;
+import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekSearchResponseDTO;
+import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekThingResponseDTO;
 import pl.edu.agh.to.bgg.exception.BoardGameNotFoundException;
-import pl.edu.agh.to.bgg.file.StoredFile;
-import pl.edu.agh.to.bgg.file.StoredFileService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GeekBoardGameProvider implements ExternalBoardGameProvider {
-    private final ApiClient apiClient;
-    private final StoredFileService storedFileService;
+    private final GeekApiClient geekApiClient;
 
-    public GeekBoardGameProvider(ApiClient apiClient, StoredFileService storedFileService) {
-        this.apiClient = apiClient;
-        this.storedFileService = storedFileService;
+    public GeekBoardGameProvider(GeekApiClient geekApiClient) {
+        this.geekApiClient = geekApiClient;
     }
 
     @Override
     public List<ExternalBoardGameEntry> searchFor(String query) {
-        return apiClient.searchFor(query)
+        return geekApiClient.searchFor(query).searchItems()
                 .stream()
-                .map(geekEntry -> new ExternalBoardGameEntry(
-                        geekEntry.objectId(),
-                        geekEntry.name(),
-                        geekEntry.yearPublished()
+                .map(item -> new ExternalBoardGameEntry(
+                        item.id(),
+                        item.name().value(),
+                        Optional.ofNullable(item.yearpublished())
+                                .map(GeekSearchResponseDTO.YearPublished::value)
                 ))
                 .toList();
     }
 
     @Override
-    public BoardGame getById(int externalId) {
-        GeekBoardGameDetailsDTO dto = apiClient.getById(externalId)
+    public ExternalBoardGameImagePair getById(int externalId) {
+         GeekThingResponseDTO.ItemDetails details = geekApiClient.getById(externalId)
                 .orElseThrow(BoardGameNotFoundException::new);
 
         BoardGame boardGame = new BoardGame(
-                dto.name(),
-                dto.description(),
-                dto.minPlayers(),
-                dto.maxPlayers(),
-                dto.playingTime()
+                details.getBestName().value(),
+                details.description(),
+                details.minplayers().value(),
+                details.maxplayers().value(),
+                details.playingtime().value()
         );
 
-        if (dto.image() != null) {
-            byte[] imageBytes = apiClient.getImage(dto.image());
-            StoredFile imageFile = storedFileService.saveFile(dto.name(), "image/jpeg", imageBytes, imageBytes.length);
-            boardGame.setImageFile(imageFile);
-        }
-
-        return boardGame;
+        return new ExternalBoardGameImagePair(
+                boardGame,
+                Optional.ofNullable(details.image())
+        );
     }
 }

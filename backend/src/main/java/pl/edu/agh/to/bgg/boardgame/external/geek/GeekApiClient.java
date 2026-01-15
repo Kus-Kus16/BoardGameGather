@@ -1,76 +1,66 @@
 package pl.edu.agh.to.bgg.boardgame.external.geek;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameDetailsDTO;
-import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekBoardGameEntryDTO;
+import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekSearchResponseDTO;
+import pl.edu.agh.to.bgg.boardgame.external.geek.dto.GeekThingResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class GeekApiClient implements ApiClient {
-    private static class GeekBoardGameEntryDTOList {
-        @JacksonXmlElementWrapper(useWrapping = false)
-        @JacksonXmlProperty(localName = "boardgame") // todo ??
-        private List<GeekBoardGameEntryDTO> boardgames;
+public class GeekApiClient {
+    private final static String BASE_URL = "https://boardgamegeek.com/xmlapi2/";
+    private final String geekToken;
+    private final RestClient restClient;
 
-        public List<GeekBoardGameEntryDTO> getBoardgames() {
-            return boardgames;
-        }
-
-        public void setBoardgames(List<GeekBoardGameEntryDTO> boardgames) {
-            this.boardgames = boardgames;
-        }
+    public GeekApiClient(@Value("${app.external-token}") String geekToken) {
+        this.geekToken = geekToken;
+        this.restClient = RestClient.builder()
+                .baseUrl(BASE_URL)
+                .build();
     }
 
-    private final static String URL = "https://boardgamegeek.com/xmlapi2/";
-    private final RestClient restClient = RestClient.create();
-
-    @Override
-    public List<GeekBoardGameEntryDTO> searchFor(String query) {
-        GeekBoardGameEntryDTOList response = restClient.get()
+    public GeekSearchResponseDTO searchFor(String query) {
+        GeekSearchResponseDTO response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URL)
                         .path("search")
                         .queryParam("query", query)
                         .queryParam("type", "boardgame")
                         .build())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + geekToken)
                 .accept(MediaType.APPLICATION_XML)
                 .retrieve()
-                .body(GeekBoardGameEntryDTOList.class);
+                .body(GeekSearchResponseDTO.class);
 
-        return response.getBoardgames();
+        if (response == null || response.isEmpty()) {
+            return new GeekSearchResponseDTO(List.of());
+        }
+
+        return response;
     }
 
-    @Override
-    public Optional<GeekBoardGameDetailsDTO> getById(int id) {
-        GeekBoardGameDetailsDTO response = restClient.get()
+    public Optional<GeekThingResponseDTO.ItemDetails> getById(int id) {
+        GeekThingResponseDTO response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URL)
                         .path("thing")
                         .queryParam("id", id)
                         .queryParam("type", "boardgame")
                         .build())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + geekToken)
                 .accept(MediaType.APPLICATION_XML)
                 .retrieve()
-                .body(GeekBoardGameDetailsDTO.class);
+                .body(GeekThingResponseDTO.class);
 
-        return Optional.ofNullable(response);
+        if (response == null || response.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(response.getItem());
     }
-
-    @Override
-    public byte[] getImage(String imageUrl) {
-        return restClient.get()
-                .uri(imageUrl)
-                .accept(MediaType.APPLICATION_OCTET_STREAM)
-                .retrieve()
-                .body(byte[].class);
-    }
-
 }
 
 

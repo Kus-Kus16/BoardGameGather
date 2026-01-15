@@ -16,6 +16,7 @@ export default function BoardGameImportForm({setError}: BoardGameImportFormProps
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<ExternalBoardGameTypeEntry[]>([]);
     const [loading, setLoading] = useState(false);
+    const [isFetched, setIsFetched] = useState(false);
 
     const searchGames = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,6 +26,7 @@ export default function BoardGameImportForm({setError}: BoardGameImportFormProps
         }
 
         setLoading(true);
+        setIsFetched(false);
         setError("");
 
         try {
@@ -34,6 +36,7 @@ export default function BoardGameImportForm({setError}: BoardGameImportFormProps
                 }
             });
             setResults(data);
+            setIsFetched(true);
         } catch {
             setError("Nie udało się pobrać wyników");
         } finally {
@@ -132,6 +135,14 @@ export default function BoardGameImportForm({setError}: BoardGameImportFormProps
                     </ListItem>
                 ))}
             </List>
+
+            {isFetched && results.length === 0 && (
+                <Box textAlign="center" mt={2}>
+                    <Typography variant="body1" color="text.secondary">
+                        Brak wyników
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 }
