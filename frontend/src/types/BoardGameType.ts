@@ -27,3 +27,9 @@ export interface ExternalBoardGameTypeEntry {
     releaseYear?: number;
 }
 
+export interface BoardGameTypePreview {
+    id: number;
+    title: string;
+    minPlayers: number;
+    maxPlayers: number;
+}

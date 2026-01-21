@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameCreateDTO;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameDetailsDTO;
+import pl.edu.agh.to.bgg.boardgame.dto.BoardGamePreviewDTO;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameUpdateDTO;
 import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameEntry;
 import pl.edu.agh.to.bgg.boardgame.external.ExternalBoardGameService;
@@ -36,6 +37,14 @@ public class BoardGameController {
 //                .map(BoardGameDetailsDTO::from)
 //                .toList();
 //    }
+
+    @GetMapping("previews")
+    public List<BoardGamePreviewDTO> getBoardGames() {
+        return boardGameService.getAvailableBoardGames()
+                .stream()
+                .map(BoardGamePreviewDTO::from)
+                .toList();
+    }
 
     @GetMapping()
     public Page<BoardGameDetailsDTO> getBoardGamesPaged(
@@ -86,13 +95,7 @@ public class BoardGameController {
 
     @PostMapping("external/{id}")
     public BoardGameDetailsDTO importExternalBoardGame(@PathVariable int id) {
-        try {
-            BoardGame boardGame = externalBoardGameService.importBoardGame(id);
-            return BoardGameDetailsDTO.from(boardGame);
-
-        }catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        BoardGame boardGame = externalBoardGameService.importBoardGame(id);
+        return BoardGameDetailsDTO.from(boardGame);
     }
 }

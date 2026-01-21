@@ -11,7 +11,7 @@ import {
     Divider
 } from "@mui/material";
 import type { GameSessionTypeCreate } from "../types/GameSessionType.ts";
-import type { BoardGameTypeDetails } from "../types/BoardGameType.ts";
+import type { BoardGameTypePreview } from "../types/BoardGameType.ts";
 import { useNavigate } from "react-router-dom";
 import BoardGameSelector from "./BoardGameSelector";
 import TightLayoutBox from "../layout/TightLayoutBox.tsx";
@@ -43,9 +43,9 @@ export default function GameSessionForm({ initialData, initialBoardGameId, onSub
         games?: string;
     }>({});
 
-    const [selectedBoardGames, setSelectedBoardGames] = useState<BoardGameTypeDetails[]>([]);
-    const [minPlayersGame, setMinPlayersGame] = useState<BoardGameTypeDetails>();
-    const [maxPlayersGame, setMaxPlayersGame] = useState<BoardGameTypeDetails>();
+    const [selectedBoardGames, setSelectedBoardGames] = useState<BoardGameTypePreview[]>([]);
+    const [minPlayersGame, setMinPlayersGame] = useState<BoardGameTypePreview>();
+    const [maxPlayersGame, setMaxPlayersGame] = useState<BoardGameTypePreview>();
 
     const navigate = useNavigate();
 
