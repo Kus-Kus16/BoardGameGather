@@ -23,7 +23,7 @@ public class BoardGameController {
     private final int maxPageSize;
 
     public BoardGameController(BoardGameService boardGameService, ExternalBoardGameService externalBoardGameService,
-                               @Value("${app.boardgame.defaultPageSize}") int defaultPageSize, @Value("${app.boardgame.maxPageSize}") int maxPageSize) {
+                               @Value("${app.boardgame.default-pagesize}") int defaultPageSize, @Value("${app.boardgame.max-pagesize}") int maxPageSize) {
         this.boardGameService = boardGameService;
         this.externalBoardGameService = externalBoardGameService;
         this.defaultPageSize = defaultPageSize;
