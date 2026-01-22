@@ -1,6 +1,10 @@
 package pl.edu.agh.to.bgg.session;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.BoardGameRepository;
@@ -49,22 +53,43 @@ public class GameSessionService {
         return gameSessionRepository.findAllByParticipantUsername(username);
     }
 
-    public List<GameSession> getSessionsFiltered(
+//    public List<GameSession> getSessionsFiltered(
+//            String username,
+//            String boardGameTitle,
+//            Integer maxMinutesPlaytime,
+//            Integer minNumberOfPlayers,
+//            Integer maxNumberOfPlayers
+//    ) {
+//        return gameSessionRepository.findAllWithDetails().stream()
+//                .filter(gameSession -> username == null || gameSession.getParticipants().stream()
+//                        .anyMatch(user -> user.getUsername().equals(username)))
+//                .filter(gameSession -> boardGameTitle == null || gameSession.getBoardGames().stream()
+//                        .anyMatch(boardGame -> boardGame.getTitle().toLowerCase().contains(boardGameTitle.toLowerCase())))
+//                .filter(gameSession -> maxMinutesPlaytime == null || gameSession.getMaxMinutesPlaytime() <= maxMinutesPlaytime)
+//                .filter(gameSession -> minNumberOfPlayers == null || gameSession.getNumberOfPlayers() >= minNumberOfPlayers)
+//                .filter(gameSession -> maxNumberOfPlayers == null || gameSession.getNumberOfPlayers() <= maxNumberOfPlayers)
+//                .toList();
+//    }
+
+    public Page<GameSession> getFilteredSessionsPage(
             String username,
             String boardGameTitle,
             Integer maxMinutesPlaytime,
             Integer minNumberOfPlayers,
-            Integer maxNumberOfPlayers
+            Integer maxNumberOfPlayers,
+            int pageNumber,
+            int pageSize
     ) {
-        return gameSessionRepository.findAllWithDetails().stream()
-                .filter(gameSession -> username == null || gameSession.getParticipants().stream()
-                        .anyMatch(user -> user.getUsername().equals(username)))
-                .filter(gameSession -> boardGameTitle == null || gameSession.getBoardGames().stream()
-                        .anyMatch(boardGame -> boardGame.getTitle().toLowerCase().contains(boardGameTitle.toLowerCase())))
-                .filter(gameSession -> maxMinutesPlaytime == null || gameSession.getMaxMinutesPlaytime() <= maxMinutesPlaytime)
-                .filter(gameSession -> minNumberOfPlayers == null || gameSession.getNumberOfPlayers() >= minNumberOfPlayers)
-                .filter(gameSession -> maxNumberOfPlayers == null || gameSession.getNumberOfPlayers() <= maxNumberOfPlayers)
-                .toList();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Specification<GameSession> spec = Specification
+                .where(GameSessionSpecifications.hasParticipantUsername(username))
+                .and(GameSessionSpecifications.containsBoardGameTitle(boardGameTitle))
+                .and(GameSessionSpecifications.hasMaximumPlaytime(maxMinutesPlaytime))
+                .and(GameSessionSpecifications.hasMinimumPlayers(minNumberOfPlayers))
+                .and(GameSessionSpecifications.hasMaximumPlayers(maxNumberOfPlayers));
+
+        return gameSessionRepository.findAll(spec, pageable);
     }
 
     @Transactional
