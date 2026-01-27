@@ -88,7 +88,7 @@ public class GameSession {
 
     @ManyToOne
     @JoinColumn(name = Columns.SELECTED_BOARD_GAME)
-    private BoardGame seletedBoardGame;
+    private BoardGame selectedBoardGame;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Vote> votes = new ArrayList<>();
@@ -139,11 +139,11 @@ public class GameSession {
     }
 
     public boolean votingEnded() {
-        return seletedBoardGame != null;
+        return selectedBoardGame != null;
     }
 
     public void setSelectedBoardGame(BoardGame boardGame) {
-        seletedBoardGame = boardGame;
+        selectedBoardGame = boardGame;
     }
 
     public List<Vote> getVotes() {
@@ -151,7 +151,7 @@ public class GameSession {
     }
 
     public BoardGame getSelectedBoardGame() {
-        return seletedBoardGame;
+        return selectedBoardGame;
     }
 
     public int getMaxMinutesPlaytime() {
