@@ -44,6 +44,29 @@ export default function VotingSection({ session, currentUserId, isOwner, disable
         known: votes.filter((v) => v.knows).length,
     });
 
+    const getPeopleLabel = (count: number): string => {
+        if (count === 1) {
+            return "osoba";
+        }
+
+        const lastTwo = count % 100;
+        const lastDigit = count % 10;
+
+        if (lastTwo >= 12 && lastTwo <= 14) {
+            return "osób"
+        }
+
+        switch (lastDigit) {
+            case 2:
+            case 3:
+            case 4:
+                return "osoby";
+            default:
+                return "osób";
+        }
+    };
+
+
     const handleVoteChange = async (boardGameId: number, type: "like" | "known", checked: boolean) => {
         if (currentUserId === undefined) {
             return;
@@ -166,8 +189,8 @@ export default function VotingSection({ session, currentUserId, isOwner, disable
                                             {boardGame.title}
                                         </Typography>
                                         <Stack direction="row" spacing={2}>
-                                            <Chip label={`${likes} osób chce zagrać`} color="success"/>
-                                            <Chip label={`${known} osób zna`} color="secondary" />
+                                            <Chip label={`${likes} ${getPeopleLabel(likes)} chce zagrać`} color="success"/>
+                                            <Chip label={`${known} ${getPeopleLabel(known)} zna`} color="secondary" />
                                         </Stack>
 
                                     </Stack>

@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { Grid, Box, Typography, Divider, CircularProgress, Alert, Button, Stack, FormControl, Select, MenuItem, InputLabel } from "@mui/material";
+import { Grid, Box, Typography, Divider, CircularProgress, Alert, Stack } from "@mui/material";
 import BoardGamePreview from "../../components/BoardGamePreview.tsx";
 import type { BoardGameTypeDetails } from "../../types/BoardGameType.ts";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import api from "../../api/axios"
 import AddElementCard from "../../components/AddElementCard.tsx";
+import Pagination, {type PaginationInfo} from "../../components/Pagination.tsx";
 
 export default function BoardGameList() {
     const [boardGames, setBoardGames] = useState<BoardGameTypeDetails[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const pageParam = Number(searchParams.get('page') ?? '0');
-    const page = Number.isNaN(pageParam) ? 0 : pageParam;
-    const sizeParam = Number(searchParams.get('size') ?? '20');
-    const size = Number.isNaN(sizeParam) ? 20 : sizeParam;
-    const [totalPages, setTotalPages] = useState<number | undefined>(undefined);
+
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(20);
+    const [paginationInfo, setPaginationInfo] = useState<PaginationInfo>()
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,12 +25,25 @@ export default function BoardGameList() {
             try {
                 const { data } = await api.get<{
                     content: BoardGameTypeDetails[];
-                    totalPages: number;
+                    first: boolean;
+                    last: boolean;
+                    number: number;
+                    numberOfElements: number;
+                    size: number;
                     totalElements: number;
+                    totalPages: number;
                 }>(`/boardgames?page=${page}&size=${size}`);
 
                 setBoardGames(data.content);
-                setTotalPages(data.totalPages);
+                setPaginationInfo({
+                    first: data.first,
+                    last: data.last,
+                    number: data.number,
+                    numberOfElements: data.numberOfElements,
+                    size: data.size,
+                    totalElements: data.totalElements,
+                    totalPages: data.totalPages
+                });
             } catch {
                 setError("Nie udało się pobrać listy gier.");
             } finally {
@@ -49,7 +62,7 @@ export default function BoardGameList() {
                 </Typography>
                 <Divider />
             </Box>
-            <Box sx={{ m: 3 }}>
+            <Box sx={{ m: 3, mb: 0 }}>
                 {loading && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
                         <CircularProgress />
@@ -63,49 +76,26 @@ export default function BoardGameList() {
                 )}
 
                 {!loading && !error && (
-                    <Grid container spacing={3} columns={10}>
-                        <Grid size={{ xs: 10, sm: 5, md: 2 }}>
-                            <AddElementCard title={"Dodaj nową grę"}
-                                            onClick={() => navigate("/boardgames/new")}
-                                            minWidth={200} maxWidth={345}
-                            />
+                    <Stack spacing={3} direction={"column"}>
+                        <Grid container spacing={3} columns={10}>
+                            <Grid size={{ xs: 10, sm: 5, md: 2 }}>
+                                <AddElementCard title={"Dodaj nową grę"}
+                                                onClick={() => navigate("/boardgames/new")}
+                                                minWidth={200} maxWidth={345}
+                                />
+                            </Grid>
+
+                            {boardGames.map((game) => (
+                                <Grid key={game.id} size={{ xs: 10, sm: 5, md: 2 }}>
+                                    <BoardGamePreview boardGame={game} showActions={true} />
+                                </Grid>
+                            ))}
                         </Grid>
 
-                        {boardGames.map((game) => (
-                            <Grid key={game.id} size={{ xs: 10, sm: 5, md: 2 }}>
-                                <BoardGamePreview boardGame={game} showActions={true} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                )}
-                {!loading && !error && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <FormControl size="small" sx={{ minWidth: 100 }}>
-                                <InputLabel id="size-select-label">Ilość</InputLabel>
-                                <Select
-                                    labelId="size-select-label"
-                                    value={String(size)}
-                                    label="Ilość"
-                                    onChange={(e) => setSearchParams({ page: '0', size: String(e.target.value) })}
-                                >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={10}>10</MenuItem>
-                                    <MenuItem value={20}>20</MenuItem>
-                                    <MenuItem value={50}>50</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            <Button variant="outlined" onClick={() => setSearchParams({ page: String(Math.max   (0, page - 1)), size: String(size) })} disabled={page === 0}>
-                                Poprzednia
-                            </Button>
-                            <Typography sx={{ alignSelf: 'center' }}>Strona {page + 1}</Typography>
-                            <Button variant="outlined" onClick={() => setSearchParams({ page: String(page + 1), size: String(size) })} disabled={totalPages !== undefined ? page + 1 >= totalPages : boardGames.length < size}>
-                                Następna
-                            </Button>
-                        </Stack>
-                    </Box>
+                        {paginationInfo && (
+                            <Pagination setPage={setPage} setSize={setSize} info={paginationInfo}/>
+                        )}
+                    </Stack>
                 )}
             </Box>
         </Box>
