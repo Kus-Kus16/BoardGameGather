@@ -19,7 +19,6 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Intege
             "ORDER BY s.date DESC")
     List<GameSession> findAllByParticipantUsername(@Param("username") String username);
 
-    // TODO check for n+1
     @Query("SELECT DISTINCT s FROM GameSession s " +
             "LEFT JOIN FETCH s.participants " +
             "JOIN FETCH s.owner " +

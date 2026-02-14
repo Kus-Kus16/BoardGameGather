@@ -5,8 +5,12 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger log = Logger.getLogger(GlobalExceptionHandler.class.getName());
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handleIllegalArgumentException(IllegalArgumentException e) {
@@ -21,6 +25,7 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problem.setTitle("Unexpected error");
         problem.setDetail(e.getMessage());
+        log.log(Level.SEVERE, "Unexpected exception occurred", e);
         return problem;
     }
 

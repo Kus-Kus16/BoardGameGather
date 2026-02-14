@@ -1,10 +1,10 @@
 package pl.edu.agh.to.bgg.session;
 
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.user.User;
+import java.util.function.BiFunction;
 
 public class GameSessionSpecifications {
 
@@ -31,16 +31,11 @@ public class GameSessionSpecifications {
 
             query.distinct(true);
 
-            Join<GameSession, BoardGame> selectedBoardGame = gameSessionRoot.join("selectedBoardGame", JoinType.LEFT);
-            Join<GameSession, BoardGame> boardGames = gameSessionRoot.join("boardGames", JoinType.LEFT);
-
-            var hasSelected = cb.isNotNull(gameSessionRoot.get("selectedBoardGame"));
-            var selectedBoardGameMatch = cb.like(cb.lower(selectedBoardGame.get("title")), pattern);
-            var boardGameMatch = cb.like(cb.lower(boardGames.get("title")), pattern);
-
-            return cb.or(
-                    cb.and(hasSelected, selectedBoardGameMatch),
-                    cb.and(cb.not(hasSelected), boardGameMatch)
+            return matchSelectedOrBoardGames(
+                    gameSessionRoot,
+                    cb,
+                    (selectedBoardGame, boardGames) ->
+                            titleMatchPredicates(cb, selectedBoardGame, boardGames, pattern)
             );
         };
     }
@@ -53,16 +48,11 @@ public class GameSessionSpecifications {
 
             query.distinct(true);
 
-            Join<GameSession, BoardGame> selectedBoardGame = gameSessionRoot.join("selectedBoardGame", JoinType.LEFT);
-            Join<GameSession, BoardGame> boardGames = gameSessionRoot.join("boardGames", JoinType.LEFT);
-
-            var hasSelected = cb.isNotNull(gameSessionRoot.get("selectedBoardGame"));
-            var selectedBoardGameMatch = cb.lessThanOrEqualTo(selectedBoardGame.get("minutesPlaytime"), maxMinutesPlaytime);
-            var boardGameMatch = cb.lessThanOrEqualTo(boardGames.get("minutesPlaytime"), maxMinutesPlaytime);
-
-            return cb.or(
-                    cb.and(hasSelected, selectedBoardGameMatch),
-                    cb.and(cb.not(hasSelected), boardGameMatch)
+            return matchSelectedOrBoardGames(
+                    gameSessionRoot,
+                    cb,
+                    (selectedBoardGame, boardGames) ->
+                            minutesPlaytimeMatchPredicates(cb, selectedBoardGame, boardGames, maxMinutesPlaytime)
             );
         };
     }
@@ -86,4 +76,50 @@ public class GameSessionSpecifications {
             return cb.lessThanOrEqualTo(gameSessionRoot.get("numberOfPlayers"), maximumPlayers);
         };
     }
+
+    private static Predicate matchSelectedOrBoardGames(
+            Root<GameSession> root,
+            CriteriaBuilder cb,
+            BiFunction<Join<GameSession, BoardGame>, Join<GameSession, BoardGame>, PredicatePair> matchPredicates
+    ) {
+        Join<GameSession, BoardGame> selectedBoardGame = root.join("selectedBoardGame", JoinType.LEFT);
+        Join<GameSession, BoardGame> boardGames = root.join("boardGames");
+
+        Predicate hasSelected = cb.isNotNull(root.get("selectedBoardGame"));
+        PredicatePair pair = matchPredicates.apply(selectedBoardGame, boardGames);
+
+        return cb.or(
+                cb.and(hasSelected, pair.selectedBoardGameMatch()),
+                cb.and(cb.not(hasSelected), pair.boardGameMatch())
+        );
+    }
+
+    private static PredicatePair titleMatchPredicates(
+            CriteriaBuilder cb,
+            Join<GameSession, BoardGame> selectedBoardGame,
+            Join<GameSession, BoardGame> boardGames,
+            String pattern
+    ) {
+        Predicate selectedBoardGameMatch = cb.like(cb.lower(selectedBoardGame.get("title")), pattern);
+        Predicate boardGameMatch = cb.like(cb.lower(boardGames.get("title")), pattern);
+
+        return new PredicatePair(selectedBoardGameMatch, boardGameMatch);
+    }
+
+    private static PredicatePair minutesPlaytimeMatchPredicates(
+            CriteriaBuilder cb,
+            Join<GameSession, BoardGame> selectedBoardGame,
+            Join<GameSession, BoardGame> boardGames,
+            int maxMinutesPlaytime
+    ) {
+        Predicate selectedBoardGameMatch = cb.lessThanOrEqualTo(selectedBoardGame.get("minutesPlaytime"), maxMinutesPlaytime);
+        Predicate boardGameMatch = cb.lessThanOrEqualTo(boardGames.get("minutesPlaytime"), maxMinutesPlaytime);
+
+        return new PredicatePair(selectedBoardGameMatch, boardGameMatch);
+    }
+
+    private record PredicatePair(
+            Predicate selectedBoardGameMatch,
+            Predicate boardGameMatch
+    ) {}
 }

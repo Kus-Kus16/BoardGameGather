@@ -53,43 +53,18 @@ public class GameSessionService {
         return gameSessionRepository.findAllByParticipantUsername(username);
     }
 
-//    public List<GameSession> getSessionsFiltered(
-//            String username,
-//            String boardGameTitle,
-//            Integer maxMinutesPlaytime,
-//            Integer minNumberOfPlayers,
-//            Integer maxNumberOfPlayers
-//    ) {
-//        return gameSessionRepository.findAllWithDetails().stream()
-//                .filter(gameSession -> username == null || gameSession.getParticipants().stream()
-//                        .anyMatch(user -> user.getUsername().equals(username)))
-//                .filter(gameSession -> boardGameTitle == null || gameSession.getBoardGames().stream()
-//                        .anyMatch(boardGame -> boardGame.getTitle().toLowerCase().contains(boardGameTitle.toLowerCase())))
-//                .filter(gameSession -> maxMinutesPlaytime == null || gameSession.getMaxMinutesPlaytime() <= maxMinutesPlaytime)
-//                .filter(gameSession -> minNumberOfPlayers == null || gameSession.getNumberOfPlayers() >= minNumberOfPlayers)
-//                .filter(gameSession -> maxNumberOfPlayers == null || gameSession.getNumberOfPlayers() <= maxNumberOfPlayers)
-//                .toList();
-//    }
-
     public Page<GameSession> getFilteredSessionsPage(
-            String username,
-            String boardGameTitle,
-            Integer maxMinutesPlaytime,
-            Integer minNumberOfPlayers,
-            Integer maxNumberOfPlayers,
-            int pageNumber,
-            int pageSize
+            GameSessionFilter filter,
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Specification<GameSession> specification = Specification
+                .where(GameSessionSpecifications.hasParticipantUsername(filter.username()))
+                .and(GameSessionSpecifications.containsBoardGameTitle(filter.boardGameName()))
+                .and(GameSessionSpecifications.hasMaximumPlaytime(filter.maxMinutesPlaytime()))
+                .and(GameSessionSpecifications.hasMinimumPlayers(filter.minNumberOfPlayers()))
+                .and(GameSessionSpecifications.hasMaximumPlayers(filter.maxNumberOfPlayers()));
 
-        Specification<GameSession> spec = Specification
-                .where(GameSessionSpecifications.hasParticipantUsername(username))
-                .and(GameSessionSpecifications.containsBoardGameTitle(boardGameTitle))
-                .and(GameSessionSpecifications.hasMaximumPlaytime(maxMinutesPlaytime))
-                .and(GameSessionSpecifications.hasMinimumPlayers(minNumberOfPlayers))
-                .and(GameSessionSpecifications.hasMaximumPlayers(maxNumberOfPlayers));
-
-        return gameSessionRepository.findAll(spec, pageable);
+        return gameSessionRepository.findAll(specification, pageable);
     }
 
     @Transactional

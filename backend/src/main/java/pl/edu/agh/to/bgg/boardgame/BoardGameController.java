@@ -1,8 +1,8 @@
 package pl.edu.agh.to.bgg.boardgame;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameCreateDTO;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameDetailsDTO;
@@ -18,25 +18,10 @@ import java.util.List;
 public class BoardGameController {
     private final BoardGameService boardGameService;
     private final ExternalBoardGameService externalBoardGameService;
-
-    private final int defaultPageSize;
-    private final int maxPageSize;
-
-    public BoardGameController(BoardGameService boardGameService, ExternalBoardGameService externalBoardGameService,
-                               @Value("${app.boardgame.default-pagesize}") int defaultPageSize, @Value("${app.boardgame.max-pagesize}") int maxPageSize) {
+    public BoardGameController(BoardGameService boardGameService, ExternalBoardGameService externalBoardGameService) {
         this.boardGameService = boardGameService;
         this.externalBoardGameService = externalBoardGameService;
-        this.defaultPageSize = defaultPageSize;
-        this.maxPageSize = maxPageSize;
     }
-
-//    @GetMapping
-//    public List<BoardGameDetailsDTO> getBoardGames() {
-//        return boardGameService.getAvailableBoardGames()
-//                .stream()
-//                .map(BoardGameDetailsDTO::from)
-//                .toList();
-//    }
 
     @GetMapping("previews")
     public List<BoardGamePreviewDTO> getBoardGames() {
@@ -47,17 +32,8 @@ public class BoardGameController {
     }
 
     @GetMapping()
-    public Page<BoardGameDetailsDTO> getBoardGamesPaged(
-        @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(required = false) Integer size
-    ) {
-        int pageSize = (size != null) ? size : defaultPageSize;
-
-        if (pageSize > maxPageSize)
-            throw new IllegalArgumentException("Max page size exceeded: " + maxPageSize);
-
-        Page<BoardGame> boardGamesPage = boardGameService.getAvailableBoardGamesPage(page, pageSize);
-
+    public Page<BoardGameDetailsDTO> getBoardGamesPaged(Pageable pageable) {
+        Page<BoardGame> boardGamesPage = boardGameService.getAvailableBoardGamesPage(pageable);
         return boardGamesPage.map(BoardGameDetailsDTO::from);
     }
 

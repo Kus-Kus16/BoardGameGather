@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.to.bgg.boardgame.BoardGame;
 import pl.edu.agh.to.bgg.boardgame.dto.BoardGameDetailsDTO;
@@ -19,12 +20,6 @@ import java.util.List;
 public class GameSessionController {
 
     private final GameSessionService gameSessionService;
-
-    @Value("${app.gameSession.defaultPageSize}")
-    private int defaultPageSize;
-
-    @Value("${app.gameSession.maxPageSize}")
-    private int maxPageSize;
 
     public GameSessionController(GameSessionService gameSessionService) {
         this.gameSessionService = gameSessionService;
@@ -50,36 +45,17 @@ public class GameSessionController {
         return GameSessionDetailsDTO.from(session);
     }
 
-//    @GetMapping("/filter")
-//    public List<GameSessionPreviewDTO> filterSessions(
-//            @RequestParam(name = "username", required = false) String username,
-//            @RequestParam(name = "boardGameName", required = false) String boardGameName,
-//            @RequestParam(name = "maxMinutesPlaytime", required = false) Integer maxMinutesPlaytime,
-//            @RequestParam(name = "minNumberOfPlayers", required = false) Integer minNumberOfPlayers,
-//            @RequestParam(name = "maxNumberOfPlayers", required = false) Integer maxNumberOfPlayers
-//    ) {
-//        List<GameSession> sessions = gameSessionService.getSessionsFiltered(username, boardGameName, maxMinutesPlaytime, minNumberOfPlayers, maxNumberOfPlayers);
-//        return sessions.stream()
-//                .map(GameSessionPreviewDTO::from)
-//                .toList();
-//    }
-
-    @GetMapping("/filterWithPage")
+    @GetMapping("/filter")
     public Page<GameSessionPreviewDTO> filterSessionsWithPages(
             @RequestParam(name = "username", required = false) String username,
             @RequestParam(name = "boardGameName", required = false) String boardGameName,
             @RequestParam(name = "maxMinutesPlaytime", required = false) Integer maxMinutesPlaytime,
             @RequestParam(name = "minNumberOfPlayers", required = false) Integer minNumberOfPlayers,
             @RequestParam(name = "maxNumberOfPlayers", required = false) Integer maxNumberOfPlayers,
-            @RequestParam(defaultValue = "0") Integer pageNumber,
-            @RequestParam(required = false) Integer pageSize
+            Pageable pageable
     ) {
-        int effectivePageSize = (pageSize != null) ? pageSize : defaultPageSize;
-
-        if (effectivePageSize > maxPageSize)
-            throw new IllegalArgumentException("Max page size exceeded: " + maxPageSize);
-
-        Page<GameSession> gameSessionsPage = gameSessionService.getFilteredSessionsPage(username, boardGameName, maxMinutesPlaytime, minNumberOfPlayers, maxNumberOfPlayers, pageNumber, effectivePageSize);
+        GameSessionFilter filter = new GameSessionFilter(username, boardGameName, maxMinutesPlaytime, minNumberOfPlayers, maxNumberOfPlayers);
+        Page<GameSession> gameSessionsPage = gameSessionService.getFilteredSessionsPage(filter, pageable);
 
         return gameSessionsPage.map(GameSessionPreviewDTO::from);
     }
@@ -105,11 +81,6 @@ public class GameSessionController {
     public void deleteSession(@PathVariable("id") int gameSessionId, @RequestHeader("X-User-Login") String username) {
         gameSessionService.deleteGameSession(gameSessionId, username);
     }
-
-//    @GetMapping("{id}/votes")
-//    public List<Vote> getSessionVoting(@PathVariable("id") int sessionId) {
-//        return gameSessionService.getSessionVoting(sessionId);
-//    }
 
     @PatchMapping("{id}/votes")
     public void voteInSession(@PathVariable("id") int sessionId,

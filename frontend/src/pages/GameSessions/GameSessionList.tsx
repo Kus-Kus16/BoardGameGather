@@ -57,8 +57,8 @@ export default function GameSessionList() {
             setError(null);
 
             const params: Record<string, unknown> = {
-                pageNumber,
-                pageSize
+                page: pageNumber,
+                size: pageSize
             };
 
             if (filters) {
@@ -73,7 +73,7 @@ export default function GameSessionList() {
                 content: GameSessionTypePreview[];
                 totalPages: number;
                 totalElements: number;
-            }>('/sessions/filterWithPage', { params });
+            }>('/sessions/filter', { params });
 
             setSessions(data.content);
             setTotalPages(data.totalPages);
