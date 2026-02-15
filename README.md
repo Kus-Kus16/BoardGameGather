@@ -1,101 +1,61 @@
 # Board Game Gather
+## Overview
+Board Game Gather is a web application designed to help users organize board game sessions, manage a shared game catalog, and coordinate play with friends.
 
-Aplikacja służy do organizowania sesji gier planszowych. Umożliwia zarządzanie katalogiem gier, tworzenie sesji rozgrywek oraz dołączanie do nich przez innych użytkowników.
+The application allows users to create sessions, browse games, vote on what to play, and import board game data from external sources.
 
 ---
 
-## Autorzy
+## Features
+### Board Games
+ - Listing all available board games
+ - Viewing detailed board game information
+ - Creating and editing board games 
+ - Adding images and rulebooks
+ - Importing games by title from BoardGameGeek API
+### Game Sessions
+ - Creating new sessions with many board games
+ - Searching and filtering sessions
+ - Voting on preferred games for a session
+### Users
+ - Basic user authentication via login
+ - Resource authorization for basic security
 
-- Maciej Kus
-- Kamil Życzkowski
-- Mariusz Krause
+## Screenshots
 
-## Technologie
- - Backend: Java 25, Spring Boot
- - Frontend: React, Typescript
- - Komunikacja: REST API
- - Baza danych: POSTGRES
+![boardgames](./.github/assets/boardgames.png)
+![boardgame details](./.github/assets/boardgame_details.png)
+![sessions](./.github/assets/sessions.png)
+![session details](./.github/assets/session_details.png)
 
-## Milestone 1
-### Model bazodanowy
-![](img/m1/dbmodel.png)
+---
 
-### Zrealizowane funkcjonalności
- - Rejestracja/logowanie użytkowników (login)
- - Listowanie gier planszowych z katalogu
- - Wyświetlanie szczegółów gry
- - Dodawanie nowych gier planszowych do katalogu
- - Listowanie istniejących sesji wraz ze szczegółami
- - Dołączanie do istniejącej sesji
- - Tworzenie nowych sesji z wybraną planszówką
+## Technologies
+- **Java 25, Spring Boot**
+- **React, Typescript, Material UI**
+- **PostgreSQL**
+- **REST API** architecture
+- **Docker, Docker Compose**
 
-### Endpointy
-![](img/m1/endpoints.png)
+## Setup
+### Clone the repository
 
-## Milestone 2
+   ```bash
+   git clone https://github.com/Kus-Kus16/BoardGameGather
+   ```
 
-### Changelog
-#### Główne zmiany
- - Migracja bazy z H2 na POSTGRES
- - Zmiana wysyłanego nagłówku login na "X-User-Login"
- - Poprawiona obsługa błędów, globalna obsługa błędów
- - Fix - błędy poprawnie wysyłają komunikaty w json
-#### Planszówki
- - Planszówki posiadają zdjęcie i instrukcję
- - Można edytować pliki i opis planszówki po dodaniu
-#### Sesje gry
- - Do sesji można dodać kilka planszówek
- - Każdy uczestnik sesji może głosować czy zna i czy chce zagrać w daną planszówkę
- - Uczestnik może opuścić sesję
- - Właściciel sesji może zakończyć głosowanie i wybrać planszówkę
- - Właściciel sesji może usunąć sesję gry
- 
-#### 
+### Define environmental variables
 
-### Endpointy
-![](img/m2/endpoints_userController.png)
-![](img/m2/endpoints_gameSessionController.png)
-![](img/m2/endpoints_boardGameController.png)
-![](img/m2/endpoints_storedFileController.png)
+Create an `.env` file based on `.env.example` with database credentials and external API token.
 
-## Milestone 3
+### Launch Docker stack
 
-### Changelog
+   ```bash
+   docker compose up
+   ```
+  
+The app will be available at: http://localhost:5173
 
-#### Element techniczny
- - Integracja z BoardGameGeek (BGG) API
- - Dodawanie planszówki z BGG poprzez wyszukiwanie po tytule
- - Pobieranie podstawowych informacji z BGG (tytuł, opis, liczba graczy, czas trwania)
- - Pobieranie obrazka z API
- - Stronicowanie wyników
-
-#### Planszówki
- - Wyszukiwanie i import gier z BoardGameGeek API
-
-#### Sesje gry
- - Filtrowanie sesji po nazwie planszówki
- - Filtrowanie sesji po maksymalnym czasie trwania
- - Filtrowanie sesji po liczbie graczy
-
-## Uruchomienie projektu
-### Backend
- W katalogu głównym projektu:
- ```
- cd ./backend
- ```
- Tworzymy plik `.env` na podstawie `.env.example`, z danymi do logowania do bazy danych. Następnie:
- ```
- sudo docker-compose up
- ```
- Uruchamiamy aplikację SpringBoot (np. przez IntelliJ IDEA), dodając plik `.env` jako zmienne środowiskowe, oraz profil `dev` w konfiguracji uruchomieniowej.
-### Frontend
- W katalogu głównym projektu:
- ```
- cd ./frontend
-
- npm install
-
- npm run dev
- ```
-
- Strona jest dostępna pod adresem http://localhost:5173/
+## Authors
+ - Maciej Kus
+ - Kamil Życzkowski
